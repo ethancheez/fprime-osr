@@ -78,6 +78,11 @@
         <channel name="systemResources.CPU_15"/>
     </packet>
 
+    <packet name="Roboclaw" id="8" level="1">
+        <channel name="roboclawCommDriver.BytesSent"/>
+        <channel name="roboclawCommDriver.BytesRecv"/>
+    </packet>
+
     <!-- Ignored packets -->
 
     <ignore>

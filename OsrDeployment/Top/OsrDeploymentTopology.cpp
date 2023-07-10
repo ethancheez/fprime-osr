@@ -158,6 +158,12 @@ void setupTopology(const TopologyState& state) {
         comDriver.configure(state.hostname, state.port);
         comDriver.startSocketTask(name, true, COMM_PRIORITY, Default::STACK_SIZE);
     }
+
+    if (roboclawCommDriver.open("/dev/ttyS0", Drv::LinuxUartDriver::UartBaudRate::BAUD_115K, Drv::LinuxUartDriver::NO_FLOW, Drv::LinuxUartDriver::PARITY_NONE, 1024)) {
+        roboclawCommDriver.startReadThread(100, Default::STACK_SIZE);
+    } else {
+        printf("Failed to open UART port /dev/ttyS0 at speed %" PRIu32 "\n", Drv::LinuxUartDriver::UartBaudRate::BAUD_115K);
+    }
 }
 
 // Variables used for cycle simulation

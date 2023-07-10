@@ -42,6 +42,10 @@ module OsrDeployment {
     instance textLogger
     instance systemResources
 
+    # Roboclaw
+    instance roboclaw
+    instance roboclawCommDriver
+
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
     # ----------------------------------------------------------------------
@@ -133,8 +137,14 @@ module OsrDeployment {
       fileUplink.bufferSendOut -> bufferManager.bufferSendIn
     }
 
-    connections OsrDeployment {
-      # Add here connections to user-defined components
+    connections Roboclaw {
+      roboclawCommDriver.allocate -> bufferManager.bufferGetCallee
+      roboclawCommDriver.$recv -> roboclaw.comDataIn
+      roboclaw.deallocate -> bufferManager.bufferSendIn
+
+      roboclaw.allocate -> bufferManager.bufferGetCallee
+      roboclaw.comDataOut -> roboclawCommDriver.send
+      roboclawCommDriver.deallocate -> bufferManager.bufferSendIn
     }
 
   }
