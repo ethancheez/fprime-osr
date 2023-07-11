@@ -5,8 +5,92 @@
 // ======================================================================
 
 #include <Components/Roboclaw/Roboclaw.hpp>
+#include <FpConfig.hpp>
 
 namespace Components {
+
+    void Roboclaw::setDutyCycleM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage)
+    {
+        I32 duty_cycle = 32767 * ((F32)speed_percentage / 100);
+
+        if(direction == Components::ROBOCLAW_MOVE_DIRECTION::BACKWARD)
+            duty_cycle *= -1;
+        else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
+            duty_cycle = 0;
+
+        // Motor 1 Duty Cycle
+        tx_buffer[0] = (U8) ((duty_cycle >> 8) & 0xFF);
+        tx_buffer[1] = (U8) (duty_cycle & 0xFF);
+        // Motor 2 Duty Cycle
+        tx_buffer[2] = (U8) ((duty_cycle >> 8) & 0xFF);
+        tx_buffer[3] = (U8) (duty_cycle & 0xFF);
+        
+        this->write(m_addr, MIXEDDUTY, tx_buffer, 4);
+    }
+
+    void Roboclaw::setVelocityM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage)
+    {
+        I32 velocity = 6000 * ((F32)speed_percentage / 100);
+
+        if(direction == Components::ROBOCLAW_MOVE_DIRECTION::BACKWARD)
+            velocity *= -1;
+        else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
+            velocity = 0;
+
+        // Motor 1 Velocity
+        tx_buffer[0] = (U8) ((velocity >> 24) & 0xFF);
+        tx_buffer[1] = (U8) ((velocity >> 16) & 0xFF);
+        tx_buffer[2] = (U8) ((velocity >> 8) & 0xFF);
+        tx_buffer[3] = (U8) (velocity & 0xFF);
+        // Motor 2 Velocity
+        tx_buffer[4] = (U8) ((velocity >> 24) & 0xFF);
+        tx_buffer[5] = (U8) ((velocity >> 16) & 0xFF);
+        tx_buffer[6] = (U8) ((velocity >> 8) & 0xFF);
+        tx_buffer[7] = (U8) (velocity & 0xFF);
+        
+        this->write(m_addr, MIXEDSPEED, tx_buffer, 8);
+    }
+
+    void Roboclaw::setVelocityDistanceM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage, U32 distance)
+    {
+        I32 velocity = 6000 * ((F32)speed_percentage / 100);
+        U8 flag = 1;
+
+        if(direction == Components::ROBOCLAW_MOVE_DIRECTION::BACKWARD)
+        {
+            velocity *= -1;
+        }
+        else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
+        {
+            velocity = 0;
+            distance = 0;
+        }
+
+        // Motor 1 Velocity
+        tx_buffer[0] = (U8) ((velocity >> 24) & 0xFF);
+        tx_buffer[1] = (U8) ((velocity >> 16) & 0xFF);
+        tx_buffer[2] = (U8) ((velocity >> 8) & 0xFF);
+        tx_buffer[3] = (U8) (velocity & 0xFF);
+        // Motor 1 Distance
+        tx_buffer[4] = (U8) ((distance >> 24) & 0xFF);
+        tx_buffer[5] = (U8) ((distance >> 16) & 0xFF);
+        tx_buffer[6] = (U8) ((distance >> 8) & 0xFF);
+        tx_buffer[7] = (U8) (distance & 0xFF);
+        // Motor 2 Velocity
+        tx_buffer[8] = (U8) ((velocity >> 24) & 0xFF);
+        tx_buffer[9] = (U8) ((velocity >> 16) & 0xFF);
+        tx_buffer[10] = (U8) ((velocity >> 8) & 0xFF);
+        tx_buffer[11] = (U8) (velocity & 0xFF);
+        // Motor 2 Distance
+        tx_buffer[12] = (U8) ((distance >> 24) & 0xFF);
+        tx_buffer[13] = (U8) ((distance >> 16) & 0xFF);
+        tx_buffer[14] = (U8) ((distance >> 8) & 0xFF);
+        tx_buffer[15] = (U8) (distance & 0xFF);
+        // Flag
+        tx_buffer[16] = (U8) (flag & 0xFF);
+
+        this->write(m_addr, MIXEDSPEEDDIST, tx_buffer, 17);
+    }
 
     void Roboclaw::getEncoderValues()
     {
@@ -43,6 +127,7 @@ namespace Components {
                 this->speedTlmData[1] = ret2;
                 this->tlmWrite_SpeedValues(speedTlmData);
                 this->tlm_state = TLM_STATE_MACHINE::ENCODER;
+                break;
             default:
                 break;
         }

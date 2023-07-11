@@ -7,6 +7,7 @@
 
 #include <Components/Roboclaw/Roboclaw.hpp>
 #include <FpConfig.hpp>
+#include <Fw/Logger/Logger.hpp>
 
 namespace Components {
 
@@ -77,6 +78,8 @@ namespace Components {
         break;
     }
 
+    // Fw::Logger::logMsg("Recv Len: %d\n", recvBuffer.getSize());
+
     if(!waitRecv)
     {
       updateTlm(curr_cmd, ret1, ret2);
@@ -101,7 +104,7 @@ namespace Components {
   // ----------------------------------------------------------------------
 
   void Roboclaw ::
-    MOVE_DIRECTION_cmdHandler(
+    MOVE_CONTINUOUS_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         Components::ROBOCLAW_MOVE_DIRECTION direction,
@@ -109,27 +112,31 @@ namespace Components {
     )
   {
     speed_percentage = (speed_percentage > 100) ? 100 : speed_percentage;
-    I32 duty_cycle = 32767 * ((F32)speed_percentage / 100);
+    this->setVelocityM1M2(direction, speed_percentage);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
 
-    switch(direction)
-    {
-      case Components::ROBOCLAW_MOVE_DIRECTION::BACKWARD:
-        duty_cycle *= -1;
-        break;
-      case Components::ROBOCLAW_MOVE_DIRECTION::STOP:
-        duty_cycle = 0;
-        break;
-      default:
-        break;
-    }
+  void Roboclaw ::
+    MOVE_DISTANCE_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        Components::ROBOCLAW_MOVE_DIRECTION direction,
+        U8 speed_percentage,
+        U32 distance
+    )
+  {
+    speed_percentage = (speed_percentage > 100) ? 100 : speed_percentage;
+    this->setVelocityDistanceM1M2(direction, speed_percentage, distance);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
 
-    tx_buffer[0] = (U8) ((duty_cycle >> 8) & 0xFF);
-    tx_buffer[1] = (U8) (duty_cycle & 0xFF);
-
-    tx_buffer[2] = (U8) ((duty_cycle >> 8) & 0xFF);
-    tx_buffer[3] = (U8) (duty_cycle & 0xFF);
-    
-    this->write(m_addr, MIXEDDUTY, tx_buffer, 4);
+  void Roboclaw ::
+    STOP_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq
+    )
+  {
+    this->setVelocityM1M2(Components::ROBOCLAW_MOVE_DIRECTION::STOP, 0);
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 

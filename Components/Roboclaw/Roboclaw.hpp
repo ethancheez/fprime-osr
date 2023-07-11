@@ -160,13 +160,30 @@ namespace Components {
       // Command handler implementations
       // ----------------------------------------------------------------------
 
-      //! Implementation for MOVE_DIRECTION command handler
-      //! 
-      void MOVE_DIRECTION_cmdHandler(
+      //! Implementation for MOVE_CONTINUOUS command handler
+      //! Continuously move in a specified direction at a given speed
+      void MOVE_CONTINUOUS_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           Components::ROBOCLAW_MOVE_DIRECTION direction, 
-          U8 speed_percentage
+          U8 speed_percentage 
+      );
+
+      //! Implementation for MOVE_DISTANCE command handler
+      //! Move in a specified direction with a given speed and distance
+      void MOVE_DISTANCE_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          Components::ROBOCLAW_MOVE_DIRECTION direction, 
+          U8 speed_percentage, 
+          U32 distance 
+      );
+
+      //! Implementation for STOP command handler
+      //! Stop all motors
+      void STOP_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
       );
 
       //! Implementation for RESET_ENCODERS command handler
@@ -178,6 +195,10 @@ namespace Components {
 
     PRIVATE:
 
+      void setDutyCycleM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocityM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocityDistanceM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
+
       void getEncoderValues();
       void getSpeedValues();
       void updateTlm(Roboclaw::CMD cmd, I32 ret1, I32 ret2);
@@ -187,8 +208,8 @@ namespace Components {
 
       NATIVE_INT_TYPE m_addr;
       Roboclaw::CMD curr_cmd;
-      U8 tx_buffer[10];
-      U8 rx_buffer[10];
+      U8 tx_buffer[32];
+      U8 rx_buffer[32];
       NATIVE_INT_TYPE rx_index;
       bool waitRecv;
 

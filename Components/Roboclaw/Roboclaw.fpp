@@ -11,10 +11,16 @@ module Components {
     @ Roboclaw Component
     passive component Roboclaw {
 
-        @ Command to move the motors attached to the Roboclaw forward or backward, given a speed percentage from 0 to 100
-        sync command MOVE_DIRECTION(direction: ROBOCLAW_MOVE_DIRECTION, speed_percentage: U8)
+        @ Continuously move in a specified direction at a given speed
+        sync command MOVE_CONTINUOUS(direction: ROBOCLAW_MOVE_DIRECTION, speed_percentage: U8)
 
-        @ Command to reset encoder telemetry values
+        @ Move in a specified direction with a given speed and distance
+        sync command MOVE_DISTANCE(direction: ROBOCLAW_MOVE_DIRECTION, speed_percentage: U8, distance: U32)
+
+        @ Stop all motors
+        sync command STOP
+
+        @ Reset encoder telemetry values
         sync command RESET_ENCODERS
 
         @ Data coming in
