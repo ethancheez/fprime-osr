@@ -1,37 +1,21 @@
 module Components {
 
-    enum ROBOCLAW_GET_DATA_CMDS {
-        GET_M1_ENCODER = 16,
-        GET_M2_ENCODER = 17,
-        GET_M1_SPEED = 18,
-        GET_M2_SPEED = 19,
-        GET_VERSION = 21,
-        GET_PWMS = 48,
-        GET_CURRENTS = 49,
-        GET_STATUS = 90,
-        GET_CONFIG = 99,
-        GET_M1_CURRENT_LIMITS = 135,
-        GET_M2_CURRENT_LIMITS = 136
-    };
-
-    enum ROBOCLAW_SET_SINGLE_MOTOR {
-        M1_FORWARD = 0,
-        M1_BACKWARD = 1
+    enum ROBOCLAW_MOVE_DIRECTION {
+        FORWARD,
+        BACKWARD,
+        STOP
     }
 
-    enum ROBOCLAW_SET_MOTORS_CMDS {
-        SET_DUTY = 34,
-        SET_SPEED = 37
-    }
+    array MotorTlmData = [2] I32
 
     @ Roboclaw Component
     passive component Roboclaw {
 
-        sync command GET_DATA(addr: U8, cmd: ROBOCLAW_GET_DATA_CMDS)
+        @ Command to move the motors attached to the Roboclaw forward or backward, given a speed percentage from 0 to 100
+        sync command MOVE_DIRECTION(direction: ROBOCLAW_MOVE_DIRECTION, speed_percentage: U8)
 
-        sync command SET_MOTORS(addr: U8, cmd: ROBOCLAW_SET_MOTORS_CMDS, motor1: U32, motor2: U32)
-
-        sync command SET_SINGLE_MOTOR(addr: U8, cmd: ROBOCLAW_SET_SINGLE_MOTOR, val: U32)
+        @ Command to reset encoder telemetry values
+        sync command RESET_ENCODERS
 
         @ Data coming in
         sync input port comDataIn: Drv.ByteStreamRecv
@@ -44,6 +28,17 @@ module Components {
 
         @ Allows for allocation of buffers
         output port allocate: Fw.BufferGet
+
+        @ Port receiving calls from the rate group
+        sync input port run: Svc.Sched
+
+        ###############################################################################
+        # Telemetry
+        ###############################################################################
+
+        telemetry EncoderValues: MotorTlmData
+
+        telemetry SpeedValues: MotorTlmData
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
