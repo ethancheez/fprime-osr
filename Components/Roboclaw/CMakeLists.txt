@@ -9,6 +9,7 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Roboclaw.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/Roboclaw.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/RoboclawImpl.cpp"
 )
 
 # Uncomment and add any modules that this component depends on, else

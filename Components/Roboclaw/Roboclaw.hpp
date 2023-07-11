@@ -8,13 +8,15 @@
 #define Roboclaw_HPP
 
 #include "Components/Roboclaw/RoboclawComponentAc.hpp"
-#include "Os/Mutex.hpp"
 
 namespace Components {
 
   class Roboclaw :
     public RoboclawComponentBase
   {
+
+    const NATIVE_INT_TYPE MAX_VELOCITY = 6000;
+    const NATIVE_INT_TYPE MAX_DUTY_CYCLE = 32767;
 
     enum CMD {
       M1FORWARD = 0,
@@ -108,8 +110,12 @@ namespace Components {
       GETM2MAXCURRENT = 136,
       SETPWMMODE = 148,
       GETPWMMODE = 149,
-      GETDUTYCYCLE = 150,
       FLAGBOOTLOADER = 255
+    };
+
+    enum TLM_STATE_MACHINE {
+      ENCODER,
+      SPEED
     };
 
     public:
@@ -128,7 +134,7 @@ namespace Components {
       //!
       ~Roboclaw();
 
-      void get_version(U8 address);
+      void set_addr(U8 addr);
 
     PRIVATE:
 
@@ -144,58 +150,99 @@ namespace Components {
           const Drv::RecvStatus &recvStatus 
       );
 
+      //! Handler implementation for run
+      //!
+      void run_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          NATIVE_UINT_TYPE context /*!< The call order*/
+      );
+
     PRIVATE:
 
       // ----------------------------------------------------------------------
       // Command handler implementations
       // ----------------------------------------------------------------------
 
-      //! Implementation for GET_DATA command handler
-      //! 
-      void GET_DATA_cmdHandler(
+      //! Implementation for MOVE_CONTINUOUS command handler
+      //! Continuously move in a specified direction at a given speed
+      void MOVE_CONTINUOUS_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          U8 addr, 
-          Components::ROBOCLAW_GET_DATA_CMDS cmd 
+          Components::ROBOCLAW_MOVE_DIRECTION direction, 
+          U8 speed_percentage 
       );
 
-      //! Implementation for SET_MOTORS command handler
-      //! 
-      void SET_MOTORS_cmdHandler(
+      //! Implementation for MOVE_DISTANCE command handler
+      //! Move in a specified direction with a given speed and distance
+      void MOVE_DISTANCE_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          U8 addr, 
-          Components::ROBOCLAW_SET_MOTORS_CMDS cmd, 
-          U32 motor1, 
-          U32 motor2 
+          Components::ROBOCLAW_MOVE_DIRECTION direction, 
+          U8 speed_percentage, 
+          U32 distance 
       );
 
-      //! Implementation for SET_SINGLE_MOTOR command handler
-      //! 
-      void SET_SINGLE_MOTOR_cmdHandler(
+      //! Implementation for MOVE_ACCELERATED_CONTINUOUS command handler
+      //! Continuously move in a specified direction with a given speed and acceleration
+      void MOVE_ACCELERATED_CONTINUOUS_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          U8 addr, 
-          Components::ROBOCLAW_SET_SINGLE_MOTOR cmd, 
-          U32 val 
+          Components::ROBOCLAW_MOVE_DIRECTION direction, 
+          U32 acceleration, 
+          U8 speed_percentage 
       );
 
+      //! Implementation for MOVE_ACCELERATED_DISTANCE command handler
+      //! Move in a specified direction with a given speed, acceleration, and distance
+      void MOVE_ACCELERATED_DISTANCE_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          Components::ROBOCLAW_MOVE_DIRECTION direction, 
+          U32 acceleration, 
+          U8 speed_percentage, 
+          U32 distance 
+      );
 
-    // Helpers
+      //! Implementation for STOP command handler
+      //! Stop all motors
+      void STOP_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      );
+
+      //! Implementation for RESET_ENCODERS command handler
+      //! Command to reset encoder telemetry values
+      void RESET_ENCODERS_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      );
+
     PRIVATE:
 
-      void reset_outputs();
+      void setDutyCycleM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocityM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocityDistanceM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
+      void setAccelVelocityM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
+      void setAccelVelocityDistanceM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
+
+      void getEncoderValues();
+      void getSpeedValues();
+      void updateTlm(Roboclaw::CMD cmd, I32 ret1, I32 ret2);
+
       void write(U8 address, U8 command, U8 *tx_data, NATIVE_INT_TYPE tx_length);
       U16 crc16(U8 *packet, NATIVE_INT_TYPE nBytes);
 
-      Os::Mutex lock;
+      NATIVE_INT_TYPE m_addr;
       Roboclaw::CMD curr_cmd;
       U8 tx_buffer[32];
       U8 rx_buffer[32];
-      NATIVE_INT_TYPE rx_index = 0;
-      bool recvComplete = false;
-      U32 ret1 = 0;
-      U32 ret2 = 0;
+      NATIVE_INT_TYPE rx_index;
+      bool waitRecv;
+
+      // Telemetry Data
+      Components::MotorTlmData encoderTlmData;
+      Components::MotorTlmData speedTlmData;
+      TLM_STATE_MACHINE tlm_state;
 
     };
 

@@ -81,6 +81,8 @@
     <packet name="Roboclaw" id="8" level="1">
         <channel name="roboclawCommDriver.BytesSent"/>
         <channel name="roboclawCommDriver.BytesRecv"/>
+        <channel name="roboclaw.EncoderValues"/>
+        <channel name="roboclaw.SpeedValues"/>
     </packet>
 
     <!-- Ignored packets -->
