@@ -15,6 +15,9 @@ namespace Components {
     public RoboclawComponentBase
   {
 
+    const NATIVE_INT_TYPE MAX_VELOCITY = 6000;
+    const NATIVE_INT_TYPE MAX_DUTY_CYCLE = 32767;
+
     enum CMD {
       M1FORWARD = 0,
       M1BACKWARD = 1,
@@ -179,6 +182,27 @@ namespace Components {
           U32 distance 
       );
 
+      //! Implementation for MOVE_ACCELERATED_CONTINUOUS command handler
+      //! Continuously move in a specified direction with a given speed and acceleration
+      void MOVE_ACCELERATED_CONTINUOUS_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          Components::ROBOCLAW_MOVE_DIRECTION direction, 
+          U32 acceleration, 
+          U8 speed_percentage 
+      );
+
+      //! Implementation for MOVE_ACCELERATED_DISTANCE command handler
+      //! Move in a specified direction with a given speed, acceleration, and distance
+      void MOVE_ACCELERATED_DISTANCE_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          Components::ROBOCLAW_MOVE_DIRECTION direction, 
+          U32 acceleration, 
+          U8 speed_percentage, 
+          U32 distance 
+      );
+
       //! Implementation for STOP command handler
       //! Stop all motors
       void STOP_cmdHandler(
@@ -198,6 +222,8 @@ namespace Components {
       void setDutyCycleM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
       void setVelocityM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
       void setVelocityDistanceM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
+      void setAccelVelocityM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
+      void setAccelVelocityDistanceM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
 
       void getEncoderValues();
       void getSpeedValues();

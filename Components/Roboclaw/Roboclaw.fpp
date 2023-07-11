@@ -17,6 +17,12 @@ module Components {
         @ Move in a specified direction with a given speed and distance
         sync command MOVE_DISTANCE(direction: ROBOCLAW_MOVE_DIRECTION, speed_percentage: U8, distance: U32)
 
+        @ Continuously move in a specified direction with a given speed and acceleration
+        sync command MOVE_ACCELERATED_CONTINUOUS(direction: ROBOCLAW_MOVE_DIRECTION, acceleration: U32, speed_percentage: U8)
+
+        @ Move in a specified direction with a given speed, acceleration, and distance
+        sync command MOVE_ACCELERATED_DISTANCE(direction: ROBOCLAW_MOVE_DIRECTION, acceleration: U32, speed_percentage: U8, distance: U32)
+
         @ Stop all motors
         sync command STOP
 

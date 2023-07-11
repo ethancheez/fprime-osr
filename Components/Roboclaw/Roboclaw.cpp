@@ -131,6 +131,35 @@ namespace Components {
   }
 
   void Roboclaw ::
+    MOVE_ACCELERATED_CONTINUOUS_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        Components::ROBOCLAW_MOVE_DIRECTION direction,
+        U32 acceleration,
+        U8 speed_percentage
+    )
+  {
+    speed_percentage = (speed_percentage > 100) ? 100 : speed_percentage;
+    this->setAccelVelocityM1M2(direction, acceleration, speed_percentage);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
+
+  void Roboclaw ::
+    MOVE_ACCELERATED_DISTANCE_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        Components::ROBOCLAW_MOVE_DIRECTION direction,
+        U32 acceleration,
+        U8 speed_percentage,
+        U32 distance
+    )
+  {
+    speed_percentage = (speed_percentage > 100) ? 100 : speed_percentage;
+    this->setAccelVelocityDistanceM1M2(direction, acceleration, speed_percentage, distance);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
+
+  void Roboclaw ::
     STOP_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq
