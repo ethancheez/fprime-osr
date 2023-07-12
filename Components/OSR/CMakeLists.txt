@@ -7,10 +7,8 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/RoboclawPorts.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Roboclaw.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Roboclaw.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/RoboclawImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/OSR.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/OSR.cpp"
 )
 
 # Uncomment and add any modules that this component depends on, else
