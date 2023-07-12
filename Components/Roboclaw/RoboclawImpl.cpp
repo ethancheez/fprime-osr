@@ -18,12 +18,8 @@ namespace Components {
         else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
             duty_cycle = 0;
 
-        // Motor 1 Duty Cycle
-        tx_buffer[0] = (U8) ((duty_cycle >> 8) & 0xFF);
-        tx_buffer[1] = (U8) (duty_cycle & 0xFF);
-        // Motor 2 Duty Cycle
-        tx_buffer[2] = (U8) ((duty_cycle >> 8) & 0xFF);
-        tx_buffer[3] = (U8) (duty_cycle & 0xFF);
+        fillBuffer16(&tx_buffer[0], duty_cycle);    // Motor 1 Duty Cycle
+        fillBuffer16(&tx_buffer[2], duty_cycle);    // Motor 2 Duty Cycle
         
         this->write(m_addr, MIXEDDUTY, tx_buffer, 4);
     }
@@ -37,16 +33,8 @@ namespace Components {
         else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
             velocity = 0;
 
-        // Motor 1 Velocity
-        tx_buffer[0] = (U8) ((velocity >> 24) & 0xFF);
-        tx_buffer[1] = (U8) ((velocity >> 16) & 0xFF);
-        tx_buffer[2] = (U8) ((velocity >> 8) & 0xFF);
-        tx_buffer[3] = (U8) (velocity & 0xFF);
-        // Motor 2 Velocity
-        tx_buffer[4] = (U8) ((velocity >> 24) & 0xFF);
-        tx_buffer[5] = (U8) ((velocity >> 16) & 0xFF);
-        tx_buffer[6] = (U8) ((velocity >> 8) & 0xFF);
-        tx_buffer[7] = (U8) (velocity & 0xFF);
+        fillBuffer32(&tx_buffer[0], velocity);  // Motor 1 Velocity
+        fillBuffer32(&tx_buffer[4], velocity);  // Motor 2 Velocity
         
         this->write(m_addr, MIXEDSPEED, tx_buffer, 8);
     }
@@ -66,28 +54,11 @@ namespace Components {
             distance = 0;
         }
 
-        // Motor 1 Velocity
-        tx_buffer[0] = (U8) ((velocity >> 24) & 0xFF);
-        tx_buffer[1] = (U8) ((velocity >> 16) & 0xFF);
-        tx_buffer[2] = (U8) ((velocity >> 8) & 0xFF);
-        tx_buffer[3] = (U8) (velocity & 0xFF);
-        // Motor 1 Distance
-        tx_buffer[4] = (U8) ((distance >> 24) & 0xFF);
-        tx_buffer[5] = (U8) ((distance >> 16) & 0xFF);
-        tx_buffer[6] = (U8) ((distance >> 8) & 0xFF);
-        tx_buffer[7] = (U8) (distance & 0xFF);
-        // Motor 2 Velocity
-        tx_buffer[8] = (U8) ((velocity >> 24) & 0xFF);
-        tx_buffer[9] = (U8) ((velocity >> 16) & 0xFF);
-        tx_buffer[10] = (U8) ((velocity >> 8) & 0xFF);
-        tx_buffer[11] = (U8) (velocity & 0xFF);
-        // Motor 2 Distance
-        tx_buffer[12] = (U8) ((distance >> 24) & 0xFF);
-        tx_buffer[13] = (U8) ((distance >> 16) & 0xFF);
-        tx_buffer[14] = (U8) ((distance >> 8) & 0xFF);
-        tx_buffer[15] = (U8) (distance & 0xFF);
-        // Flag
-        tx_buffer[16] = (U8) (flag & 0xFF);
+        fillBuffer32(&tx_buffer[0], velocity);  // Motor 1 Velocity
+        fillBuffer32(&tx_buffer[4], distance);  // Motor 1 Distance
+        fillBuffer32(&tx_buffer[8], velocity);  // Motor 2 Velocity
+        fillBuffer32(&tx_buffer[12], distance); // Motor 2 Distance
+        fillBuffer8(&tx_buffer[16], flag);      // Flag
 
         this->write(m_addr, MIXEDSPEEDDIST, tx_buffer, 17);
     }
@@ -101,22 +72,10 @@ namespace Components {
             velocity *= -1;
         else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
             velocity = 0;
-
-        // Acceleration
-        tx_buffer[0] = (U8) ((accel >> 24) & 0xFF);
-        tx_buffer[1] = (U8) ((accel >> 16) & 0xFF);
-        tx_buffer[2] = (U8) ((accel >> 8) & 0xFF);
-        tx_buffer[3] = (U8) (accel & 0xFF);
-        // Motor 1 Velocity
-        tx_buffer[4] = (U8) ((velocity >> 24) & 0xFF);
-        tx_buffer[5] = (U8) ((velocity >> 16) & 0xFF);
-        tx_buffer[6] = (U8) ((velocity >> 8) & 0xFF);
-        tx_buffer[7] = (U8) (velocity & 0xFF);
-        // Motor 2 Velocity
-        tx_buffer[8] = (U8) ((velocity >> 24) & 0xFF);
-        tx_buffer[9] = (U8) ((velocity >> 16) & 0xFF);
-        tx_buffer[10] = (U8) ((velocity >> 8) & 0xFF);
-        tx_buffer[11] = (U8) (velocity & 0xFF);
+        
+        fillBuffer32(&tx_buffer[0], accel);     // Acceleration
+        fillBuffer32(&tx_buffer[4], velocity);  // Motor 1 Velocity
+        fillBuffer32(&tx_buffer[8], velocity);  // Motor 2 Velocity
 
         this->write(m_addr, MIXEDSPEEDACCEL, tx_buffer, 12);
     }
@@ -135,34 +94,13 @@ namespace Components {
             velocity = 0;
             distance = 0;
         }
-
-        // Acceleration
-        tx_buffer[0] = (U8) ((accel >> 24) & 0xFF);
-        tx_buffer[1] = (U8) ((accel >> 16) & 0xFF);
-        tx_buffer[2] = (U8) ((accel >> 8) & 0xFF);
-        tx_buffer[3] = (U8) (accel & 0xFF);
-        // Motor 1 Velocity
-        tx_buffer[4] = (U8) ((velocity >> 24) & 0xFF);
-        tx_buffer[5] = (U8) ((velocity >> 16) & 0xFF);
-        tx_buffer[6] = (U8) ((velocity >> 8) & 0xFF);
-        tx_buffer[7] = (U8) (velocity & 0xFF);
-        // Motor 1 Distance
-        tx_buffer[8] = (U8) ((distance >> 24) & 0xFF);
-        tx_buffer[9] = (U8) ((distance >> 16) & 0xFF);
-        tx_buffer[10] = (U8) ((distance >> 8) & 0xFF);
-        tx_buffer[11] = (U8) (distance & 0xFF);
-        // Motor 2 Velocity
-        tx_buffer[12] = (U8) ((velocity >> 24) & 0xFF);
-        tx_buffer[13] = (U8) ((velocity >> 16) & 0xFF);
-        tx_buffer[14] = (U8) ((velocity >> 8) & 0xFF);
-        tx_buffer[15] = (U8) (velocity & 0xFF);
-        // Motor 2 Distance
-        tx_buffer[16] = (U8) ((distance >> 24) & 0xFF);
-        tx_buffer[17] = (U8) ((distance >> 16) & 0xFF);
-        tx_buffer[18] = (U8) ((distance >> 8) & 0xFF);
-        tx_buffer[19] = (U8) (distance & 0xFF);
-        // Flag
-        tx_buffer[20] = (U8) (flag & 0xFF);
+        
+        fillBuffer32(&tx_buffer[0], accel);     // Acceleration
+        fillBuffer32(&tx_buffer[4], velocity);  // Motor 1 Velocity 
+        fillBuffer32(&tx_buffer[8], distance);  // Motor 1 Distance
+        fillBuffer32(&tx_buffer[12], velocity); // Motor 2 Velocity
+        fillBuffer32(&tx_buffer[16], distance); // Motor 2 Distance
+        fillBuffer8(&tx_buffer[20], flag);      // Flag
 
         this->write(m_addr, MIXEDSPEEDACCELDIST, tx_buffer, 21);
     }
@@ -206,6 +144,25 @@ namespace Components {
             default:
                 break;
         }
+    }
+
+    void Roboclaw::fillBuffer8(U8 *buf, U8 val)
+    {
+        *(buf) = (U8) (val & 0xFF);
+    }
+
+    void Roboclaw::fillBuffer16(U8 *buf, U16 val)
+    {
+        *(buf) = (U8) ((val >> 8) & 0xFF);
+        *(buf + 1) = (U8) (val & 0xFF);
+    }
+
+    void Roboclaw::fillBuffer32(U8 *buf, U32 val)
+    {
+        *(buf) = (U8) ((val >> 24) & 0xFF);
+        *(buf + 1) = (U8) ((val >> 16) & 0xFF);
+        *(buf + 2) = (U8) ((val >> 8) & 0xFF);
+        *(buf + 3) = (U8) (val & 0xFF);
     }
 
     void Roboclaw::write(U8 address, U8 command, U8 *tx_data, NATIVE_INT_TYPE tx_length) 
