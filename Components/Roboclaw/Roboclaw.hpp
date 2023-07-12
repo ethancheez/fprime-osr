@@ -113,6 +113,11 @@ namespace Components {
       FLAGBOOTLOADER = 255
     };
 
+    enum MOTOR {
+      MOTOR1,
+      MOTOR2
+    };
+
     enum TLM_STATE_MACHINE {
       ENCODER,
       SPEED
@@ -219,16 +224,11 @@ namespace Components {
 
     PRIVATE:
 
-      void setDutyCycleM1(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
-      void setDutyCycleM2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocityM1(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocityM2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocityDistanceM1(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
-      void setVelocityDistanceM2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
-      void setAccelVelocityM1(Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
-      void setAccelVelocityM2(Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
-      void setAccelVelocityDistanceM1(Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
-      void setAccelVelocityDistanceM2(Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
+      void setDutyCycle(Components::Roboclaw::MOTOR motor, Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocity(Components::Roboclaw::MOTOR motor, Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocityDistance(Components::Roboclaw::MOTOR motor, Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
+      void setAccelVelocity(Components::Roboclaw::MOTOR motor, Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
+      void setAccelVelocityDistance(Components::Roboclaw::MOTOR motor, Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
       void setDutyCycleM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
       void setVelocityM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage);
       void setVelocityDistanceM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);

@@ -9,6 +9,21 @@
 
 namespace Components {
 
+    void Roboclaw::setDutyCycle(Components::Roboclaw::MOTOR motor, Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage)
+    {
+        I32 duty_cycle = MAX_DUTY_CYCLE * ((F32)speed_percentage / 100);
+
+        if(direction == Components::ROBOCLAW_MOVE_DIRECTION::BACKWARD)
+            duty_cycle *= -1;
+        else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
+            duty_cycle = 0;
+
+        fillBuffer16(&tx_buffer[0], duty_cycle);    // Motor Duty Cycle
+        
+        Components::Roboclaw::CMD cmd = (motor == Components::Roboclaw::MOTOR::MOTOR1) ? M1DUTY : M2DUTY;
+        this->write(m_addr, cmd, tx_buffer, 2);
+    }
+
     void Roboclaw::setDutyCycleM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage)
     {
         I32 duty_cycle = MAX_DUTY_CYCLE * ((F32)speed_percentage / 100);
@@ -24,6 +39,21 @@ namespace Components {
         this->write(m_addr, MIXEDDUTY, tx_buffer, 4);
     }
 
+    void Roboclaw::setVelocity(Components::Roboclaw::MOTOR motor, Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage)
+    {
+        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
+
+        if(direction == Components::ROBOCLAW_MOVE_DIRECTION::BACKWARD)
+            velocity *= -1;
+        else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
+            velocity = 0;
+
+        fillBuffer32(&tx_buffer[0], velocity);  // Motor Velocity
+        
+        Components::Roboclaw::CMD cmd = (motor == Components::Roboclaw::MOTOR::MOTOR1) ? M1SPEED : M2SPEED;
+        this->write(m_addr, cmd, tx_buffer, 4);
+    }
+
     void Roboclaw::setVelocityM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage)
     {
         I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
@@ -37,6 +67,29 @@ namespace Components {
         fillBuffer32(&tx_buffer[4], velocity);  // Motor 2 Velocity
         
         this->write(m_addr, MIXEDSPEED, tx_buffer, 8);
+    }
+
+    void Roboclaw::setVelocityDistance(Components::Roboclaw::MOTOR motor, Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage, U32 distance)
+    {
+        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
+        U8 flag = 1;
+
+        if(direction == Components::ROBOCLAW_MOVE_DIRECTION::BACKWARD)
+        {
+            velocity *= -1;
+        }
+        else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
+        {
+            velocity = 0;
+            distance = 0;
+        }
+
+        fillBuffer32(&tx_buffer[0], velocity);  // Motor Velocity
+        fillBuffer32(&tx_buffer[4], distance);  // Motor Distance
+        fillBuffer8(&tx_buffer[8], flag);       // Flag
+
+        Components::Roboclaw::CMD cmd = (motor == Components::Roboclaw::MOTOR::MOTOR1) ? M1SPEEDDIST : M2SPEEDDIST;
+        this->write(m_addr, cmd, tx_buffer, 9);
     }
 
     void Roboclaw::setVelocityDistanceM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U8 speed_percentage, U32 distance)
@@ -63,6 +116,23 @@ namespace Components {
         this->write(m_addr, MIXEDSPEEDDIST, tx_buffer, 17);
     }
 
+    void Roboclaw::setAccelVelocity(Components::Roboclaw::MOTOR motor, Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage)
+    {
+        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
+        U8 flag = 1;
+
+        if(direction == Components::ROBOCLAW_MOVE_DIRECTION::BACKWARD)
+            velocity *= -1;
+        else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
+            velocity = 0;
+        
+        fillBuffer32(&tx_buffer[0], accel);     // Acceleration
+        fillBuffer32(&tx_buffer[4], velocity);  // Motor Velocity
+
+        Components::Roboclaw::CMD cmd = (motor == Components::Roboclaw::MOTOR::MOTOR1) ? M1SPEEDACCEL : M2SPEEDACCEL;
+        this->write(m_addr, M1SPEEDACCEL, tx_buffer, 8);
+    }
+
     void Roboclaw::setAccelVelocityM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage)
     {
         I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
@@ -78,6 +148,30 @@ namespace Components {
         fillBuffer32(&tx_buffer[8], velocity);  // Motor 2 Velocity
 
         this->write(m_addr, MIXEDSPEEDACCEL, tx_buffer, 12);
+    }
+
+    void Roboclaw::setAccelVelocityDistance(Components::Roboclaw::MOTOR motor, Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance)
+    {
+        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
+        U8 flag = 1;
+
+        if(direction == Components::ROBOCLAW_MOVE_DIRECTION::BACKWARD)
+        {
+            velocity *= -1;
+        }
+        else if(direction == Components::ROBOCLAW_MOVE_DIRECTION::STOP)
+        {
+            velocity = 0;
+            distance = 0;
+        }
+        
+        fillBuffer32(&tx_buffer[0], accel);     // Acceleration
+        fillBuffer32(&tx_buffer[4], velocity);  // Motor Velocity 
+        fillBuffer32(&tx_buffer[8], distance);  // Motor Distance
+        fillBuffer8(&tx_buffer[12], flag);      // Flag
+
+        Components::Roboclaw::CMD cmd = (motor == Components::Roboclaw::MOTOR::MOTOR1) ? M1SPEEDACCELDIST : M2SPEEDACCELDIST;
+        this->write(m_addr, cmd, tx_buffer, 13);
     }
 
     void Roboclaw::setAccelVelocityDistanceM1M2(Components::ROBOCLAW_MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance)
