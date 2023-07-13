@@ -9,7 +9,7 @@
 #include <FpConfig.hpp>
 #include <Fw/Logger/Logger.hpp>
 
-namespace Components {
+namespace OsrModule {
 
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
@@ -57,8 +57,8 @@ namespace Components {
 
     switch(curr_cmd)
     {
-      case RoboclawModule::ROBOCLAW_CMD::GETENCODERS:
-      case RoboclawModule::ROBOCLAW_CMD::GETISPEEDS:
+      case OsrModule::ROBOCLAW_CMD::GETENCODERS:
+      case OsrModule::ROBOCLAW_CMD::GETISPEEDS:
         if(rx_index == 10)
         {
           ret1 += rx_buffer[0] << 24;
@@ -92,8 +92,8 @@ namespace Components {
   void Roboclaw ::
     motorControlIn_handler(
         const NATIVE_INT_TYPE portNum,
-        const RoboclawModule::ROBOCLAW_CMD &cmd,
-        const RoboclawModule::MOTOR_SELECT &motor,
+        const OsrModule::ROBOCLAW_CMD &cmd,
+        const OsrModule::MOTOR_SELECT &motor,
         U8 speed_percentage,
         U32 acceleration,
         U32 distance
@@ -120,7 +120,7 @@ namespace Components {
     MOVE_CONTINUOUS_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        RoboclawModule::MOVE_DIRECTION direction,
+        OsrModule::MOVE_DIRECTION direction,
         U8 speed_percentage
     )
   {
@@ -133,7 +133,7 @@ namespace Components {
     MOVE_DISTANCE_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        RoboclawModule::MOVE_DIRECTION direction,
+        OsrModule::MOVE_DIRECTION direction,
         U8 speed_percentage,
         U32 distance
     )
@@ -147,7 +147,7 @@ namespace Components {
     MOVE_ACCELERATED_CONTINUOUS_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        RoboclawModule::MOVE_DIRECTION direction,
+        OsrModule::MOVE_DIRECTION direction,
         U32 acceleration,
         U8 speed_percentage
     )
@@ -161,7 +161,7 @@ namespace Components {
     MOVE_ACCELERATED_DISTANCE_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        RoboclawModule::MOVE_DIRECTION direction,
+        OsrModule::MOVE_DIRECTION direction,
         U32 acceleration,
         U8 speed_percentage,
         U32 distance
@@ -178,7 +178,7 @@ namespace Components {
         const U32 cmdSeq
     )
   {
-    this->setVelocityM1M2(RoboclawModule::MOVE_DIRECTION::STOP, 0);
+    this->setVelocityM1M2(OsrModule::MOVE_DIRECTION::STOP, 0);
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -188,8 +188,8 @@ namespace Components {
         const U32 cmdSeq
     )
   {
-    this->write(m_addr, RoboclawModule::ROBOCLAW_CMD::RESETENC, nullptr, 0);
+    this->write(m_addr, OsrModule::ROBOCLAW_CMD::RESETENC, nullptr, 0);
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
-} // end namespace Components
+} // end namespace OsrModule

@@ -1,4 +1,4 @@
-# Components::OSR
+# OsrModule::OSR
 
 Component for the Open Source Rover
 

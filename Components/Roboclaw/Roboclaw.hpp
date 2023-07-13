@@ -9,7 +9,7 @@
 
 #include "Components/Roboclaw/RoboclawComponentAc.hpp"
 
-namespace Components {
+namespace OsrModule {
 
   class Roboclaw :
     public RoboclawComponentBase
@@ -64,8 +64,8 @@ namespace Components {
       //!
       void motorControlIn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const RoboclawModule::ROBOCLAW_CMD &cmd, 
-          const RoboclawModule::MOTOR_SELECT &motor, 
+          const OsrModule::ROBOCLAW_CMD &cmd, 
+          const OsrModule::MOTOR_SELECT &motor, 
           U8 speed_percentage, 
           U32 acceleration, 
           U32 distance 
@@ -89,7 +89,7 @@ namespace Components {
       void MOVE_CONTINUOUS_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          RoboclawModule::MOVE_DIRECTION direction, 
+          OsrModule::MOVE_DIRECTION direction, 
           U8 speed_percentage 
       );
 
@@ -98,7 +98,7 @@ namespace Components {
       void MOVE_DISTANCE_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          RoboclawModule::MOVE_DIRECTION direction, 
+          OsrModule::MOVE_DIRECTION direction, 
           U8 speed_percentage, 
           U32 distance 
       );
@@ -108,7 +108,7 @@ namespace Components {
       void MOVE_ACCELERATED_CONTINUOUS_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          RoboclawModule::MOVE_DIRECTION direction, 
+          OsrModule::MOVE_DIRECTION direction, 
           U32 acceleration, 
           U8 speed_percentage 
       );
@@ -118,7 +118,7 @@ namespace Components {
       void MOVE_ACCELERATED_DISTANCE_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          RoboclawModule::MOVE_DIRECTION direction, 
+          OsrModule::MOVE_DIRECTION direction, 
           U32 acceleration, 
           U8 speed_percentage, 
           U32 distance 
@@ -140,20 +140,20 @@ namespace Components {
 
     PRIVATE:
 
-      void setDutyCycle(Components::Roboclaw::MOTOR motor, RoboclawModule::MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocity(Components::Roboclaw::MOTOR motor, RoboclawModule::MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocityDistance(Components::Roboclaw::MOTOR motor, RoboclawModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
-      void setAccelVelocity(Components::Roboclaw::MOTOR motor, RoboclawModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
-      void setAccelVelocityDistance(Components::Roboclaw::MOTOR motor, RoboclawModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
-      void setDutyCycleM1M2(RoboclawModule::MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocityM1M2(RoboclawModule::MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocityDistanceM1M2(RoboclawModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
-      void setAccelVelocityM1M2(RoboclawModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
-      void setAccelVelocityDistanceM1M2(RoboclawModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
+      void setDutyCycle(OsrModule::Roboclaw::MOTOR motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocity(OsrModule::Roboclaw::MOTOR motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocityDistance(OsrModule::Roboclaw::MOTOR motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
+      void setAccelVelocity(OsrModule::Roboclaw::MOTOR motor, OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
+      void setAccelVelocityDistance(OsrModule::Roboclaw::MOTOR motor, OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
+      void setDutyCycleM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocityM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocityDistanceM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
+      void setAccelVelocityM1M2(OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
+      void setAccelVelocityDistanceM1M2(OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
 
       void getEncoderValues();
       void getSpeedValues();
-      void updateTlm(RoboclawModule::ROBOCLAW_CMD cmd, I32 ret1, I32 ret2);
+      void updateTlm(OsrModule::ROBOCLAW_CMD cmd, I32 ret1, I32 ret2);
 
       void fillBuffer8(U8 *buf, U8 val);
       void fillBuffer16(U8 *buf, U16 val);
@@ -162,19 +162,19 @@ namespace Components {
       U16 crc16(U8 *packet, NATIVE_INT_TYPE nBytes);
 
       NATIVE_INT_TYPE m_addr;
-      RoboclawModule::ROBOCLAW_CMD curr_cmd;
+      OsrModule::ROBOCLAW_CMD curr_cmd;
       U8 tx_buffer[32];
       U8 rx_buffer[32];
       NATIVE_INT_TYPE rx_index;
       bool waitRecv;
 
       // Telemetry Data
-      Components::MotorTlmData encoderTlmData;
-      Components::MotorTlmData speedTlmData;
+      OsrModule::MotorTlmData encoderTlmData;
+      OsrModule::MotorTlmData speedTlmData;
       TLM_STATE_MACHINE tlm_state;
 
     };
 
-} // end namespace Components
+} // end namespace OsrModule
 
 #endif

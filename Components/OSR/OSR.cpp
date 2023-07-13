@@ -8,7 +8,7 @@
 #include <Components/OSR/OSR.hpp>
 #include <FpConfig.hpp>
 
-namespace Components {
+namespace OsrModule {
 
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
@@ -28,4 +28,18 @@ namespace Components {
 
   }
 
-} // end namespace Components
+  // ----------------------------------------------------------------------
+  // Command handler implementations
+  // ----------------------------------------------------------------------
+
+  void OSR ::
+    TODO_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq
+    )
+  {
+    // TODO
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+  }
+
+} // end namespace OsrModule

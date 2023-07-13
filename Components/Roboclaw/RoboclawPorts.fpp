@@ -1,4 +1,4 @@
-module RoboclawModule {
+module OsrModule {
 
     enum MOVE_DIRECTION {
         FORWARD,

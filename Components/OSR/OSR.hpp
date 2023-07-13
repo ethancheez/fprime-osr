@@ -9,7 +9,7 @@
 
 #include "Components/OSR/OSRComponentAc.hpp"
 
-namespace Components {
+namespace OsrModule {
 
   class OSR :
     public OSRComponentBase
@@ -31,9 +31,22 @@ namespace Components {
       //!
       ~OSR();
 
+      PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Command handler implementations
+      // ----------------------------------------------------------------------
+
+      //! Implementation for TODO command handler
+      //! 
+      void TODO_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      );
+
 
     };
 
-} // end namespace Components
+} // end namespace OsrModule
 
 #endif

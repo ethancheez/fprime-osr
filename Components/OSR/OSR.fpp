@@ -1,6 +1,10 @@
-module Components {
+module OsrModule {
     @ Component for the Open Source Rover
     passive component OSR {
+
+        output port motorControlOut: OsrModule.motorControl
+
+        sync command TODO
 
         ##############################################################################
         #### Uncomment the following examples to start customizing your component ####

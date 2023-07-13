@@ -34,6 +34,7 @@ module OsrDeployment {
     instance bufferManager
     instance framer
     instance linuxTime
+    instance osr
     instance prmDb
     instance rateGroup1
     instance rateGroup2
@@ -146,6 +147,8 @@ module OsrDeployment {
       roboclaw.allocate -> bufferManager.bufferGetCallee
       roboclaw.comDataOut -> roboclawCommDriver.send
       roboclawCommDriver.deallocate -> bufferManager.bufferSendIn
+
+      osr.motorControlOut -> roboclaw.motorControlIn
     }
 
   }
