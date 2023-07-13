@@ -130,7 +130,7 @@ namespace OsrModule {
         fillBuffer32(&tx_buffer[4], velocity);  // Motor Velocity
 
         OsrModule::ROBOCLAW_CMD cmd = (motor == OsrModule::Roboclaw::MOTOR::MOTOR1) ? OsrModule::ROBOCLAW_CMD::M1SPEEDACCEL : OsrModule::ROBOCLAW_CMD::M2SPEEDACCEL;
-        this->write(m_addr, OsrModule::ROBOCLAW_CMD::M1SPEEDACCEL, tx_buffer, 8);
+        this->write(m_addr, cmd, tx_buffer, 8);
     }
 
     void Roboclaw::setAccelVelocityM1M2(OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage)
