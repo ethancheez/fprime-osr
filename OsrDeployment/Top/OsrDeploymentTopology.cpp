@@ -164,6 +164,12 @@ void setupTopology(const TopologyState& state) {
     } else {
         Fw::Logger::logMsg("Failed to open UART port /dev/ttyS0 at speed %" PRIu32 "\n", Drv::LinuxUartDriver::UartBaudRate::BAUD_115K);
     }
+
+    roboclaw1.set_addr(128); // Right front (M1), Right middle (M2)
+    roboclaw2.set_addr(129); // Right back (M1), Left back (M2)
+    roboclaw3.set_addr(130); // Left middle (M1), Left front (M2)
+    roboclaw4.set_addr(131); // Right front corner (M1), Right back corner (M2)
+    roboclaw5.set_addr(132); // Left back corner (M1), Left front corner (M2)
 }
 
 // Variables used for cycle simulation

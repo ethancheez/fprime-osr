@@ -9,16 +9,16 @@ module OsrModule {
         sync input port motorControlIn: OsrModule.motorControl
 
         @ Continuously move in a specified direction at a given speed
-        sync command MOVE_CONTINUOUS(direction: OsrModule.MOVE_DIRECTION, speed_percentage: U8)
+        sync command MOVE_CONTINUOUS(motor: OsrModule.MOTOR_SELECT, direction: OsrModule.MOVE_DIRECTION, speed_percentage: U8)
 
         @ Move in a specified direction with a given speed and distance
-        sync command MOVE_DISTANCE(direction: OsrModule.MOVE_DIRECTION, speed_percentage: U8, distance: U32)
+        sync command MOVE_DISTANCE(motor: OsrModule.MOTOR_SELECT, direction: OsrModule.MOVE_DIRECTION, speed_percentage: U8, distance: U32)
 
         @ Continuously move in a specified direction with a given speed and acceleration
-        sync command MOVE_ACCELERATED_CONTINUOUS(direction: OsrModule.MOVE_DIRECTION, acceleration: U32, speed_percentage: U8)
+        sync command MOVE_ACCELERATED_CONTINUOUS(motor: OsrModule.MOTOR_SELECT, direction: OsrModule.MOVE_DIRECTION, acceleration: U32, speed_percentage: U8)
 
         @ Move in a specified direction with a given speed, acceleration, and distance
-        sync command MOVE_ACCELERATED_DISTANCE(direction: OsrModule.MOVE_DIRECTION, acceleration: U32, speed_percentage: U8, distance: U32)
+        sync command MOVE_ACCELERATED_DISTANCE(motor: OsrModule.MOTOR_SELECT, direction: OsrModule.MOVE_DIRECTION, acceleration: U32, speed_percentage: U8, distance: U32)
 
         @ Stop all motors
         sync command STOP

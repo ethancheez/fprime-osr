@@ -34,7 +34,6 @@ module OsrDeployment {
     instance bufferManager
     instance framer
     instance linuxTime
-    instance osr
     instance prmDb
     instance rateGroup1
     instance rateGroup2
@@ -44,7 +43,12 @@ module OsrDeployment {
     instance systemResources
 
     # Roboclaw
-    instance roboclaw
+    instance osr
+    instance roboclaw1
+    instance roboclaw2
+    instance roboclaw3
+    instance roboclaw4
+    instance roboclaw5
     instance roboclawCommDriver
 
     # ----------------------------------------------------------------------
@@ -108,7 +112,7 @@ module OsrDeployment {
       # Rate group 2
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2.CycleIn
       rateGroup2.RateGroupMemberOut[0] -> cmdSeq.schedIn
-      rateGroup2.RateGroupMemberOut[1] -> roboclaw.run
+      rateGroup2.RateGroupMemberOut[1] -> roboclaw1.run
 
       # Rate group 3
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3.CycleIn
@@ -141,14 +145,14 @@ module OsrDeployment {
 
     connections Roboclaw {
       roboclawCommDriver.allocate -> bufferManager.bufferGetCallee
-      roboclawCommDriver.$recv -> roboclaw.comDataIn
-      roboclaw.deallocate -> bufferManager.bufferSendIn
+      roboclawCommDriver.$recv -> roboclaw1.comDataIn
+      roboclaw1.deallocate -> bufferManager.bufferSendIn
 
-      roboclaw.allocate -> bufferManager.bufferGetCallee
-      roboclaw.comDataOut -> roboclawCommDriver.send
+      roboclaw1.allocate -> bufferManager.bufferGetCallee
+      roboclaw1.comDataOut -> roboclawCommDriver.send
       roboclawCommDriver.deallocate -> bufferManager.bufferSendIn
 
-      osr.motorControlOut -> roboclaw.motorControlIn
+      osr.motorControlOut -> roboclaw1.motorControlIn
     }
 
   }

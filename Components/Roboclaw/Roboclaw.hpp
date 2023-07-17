@@ -18,11 +18,6 @@ namespace OsrModule {
     const NATIVE_INT_TYPE MAX_VELOCITY = 6000;
     const NATIVE_INT_TYPE MAX_DUTY_CYCLE = 32767;
 
-    enum MOTOR {
-      MOTOR1,
-      MOTOR2
-    };
-
     enum TLM_STATE_MACHINE {
       ENCODER,
       SPEED
@@ -89,6 +84,7 @@ namespace OsrModule {
       void MOVE_CONTINUOUS_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
+          OsrModule::MOTOR_SELECT motor, 
           OsrModule::MOVE_DIRECTION direction, 
           U8 speed_percentage 
       );
@@ -98,6 +94,7 @@ namespace OsrModule {
       void MOVE_DISTANCE_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
+          OsrModule::MOTOR_SELECT motor, 
           OsrModule::MOVE_DIRECTION direction, 
           U8 speed_percentage, 
           U32 distance 
@@ -108,6 +105,7 @@ namespace OsrModule {
       void MOVE_ACCELERATED_CONTINUOUS_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
+          OsrModule::MOTOR_SELECT motor, 
           OsrModule::MOVE_DIRECTION direction, 
           U32 acceleration, 
           U8 speed_percentage 
@@ -118,6 +116,7 @@ namespace OsrModule {
       void MOVE_ACCELERATED_DISTANCE_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
+          OsrModule::MOTOR_SELECT motor, 
           OsrModule::MOVE_DIRECTION direction, 
           U32 acceleration, 
           U8 speed_percentage, 
@@ -140,11 +139,11 @@ namespace OsrModule {
 
     PRIVATE:
 
-      void setDutyCycle(OsrModule::Roboclaw::MOTOR motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocity(OsrModule::Roboclaw::MOTOR motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocityDistance(OsrModule::Roboclaw::MOTOR motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
-      void setAccelVelocity(OsrModule::Roboclaw::MOTOR motor, OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
-      void setAccelVelocityDistance(OsrModule::Roboclaw::MOTOR motor, OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
+      void setDutyCycle(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocity(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
+      void setVelocityDistance(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
+      void setAccelVelocity(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
+      void setAccelVelocityDistance(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
       void setDutyCycleM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
       void setVelocityM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
       void setVelocityDistanceM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);

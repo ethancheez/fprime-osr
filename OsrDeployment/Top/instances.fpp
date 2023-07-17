@@ -128,8 +128,16 @@ module OsrDeployment {
 
   instance roboclawCommDriver: Drv.LinuxUartDriver base id 0x10000
 
-  instance roboclaw: OsrModule.Roboclaw base id 0x10100
+  instance osr: OsrModule.OSR base id 0x10100
 
-  instance osr: OsrModule.OSR base id 0x10200
+  instance roboclaw1: OsrModule.Roboclaw base id 0x10200
+
+  instance roboclaw2: OsrModule.Roboclaw base id 0x10300
+
+  instance roboclaw3: OsrModule.Roboclaw base id 0x10400
+
+  instance roboclaw4: OsrModule.Roboclaw base id 0x10500
+
+  instance roboclaw5: OsrModule.Roboclaw base id 0x10600
 
 }

@@ -120,12 +120,18 @@ namespace OsrModule {
     MOVE_CONTINUOUS_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
+        OsrModule::MOTOR_SELECT motor,
         OsrModule::MOVE_DIRECTION direction,
         U8 speed_percentage
     )
   {
     speed_percentage = (speed_percentage > 100) ? 100 : speed_percentage;
-    this->setVelocityM1M2(direction, speed_percentage);
+
+    if(motor == OsrModule::MOTOR_SELECT::BOTH)
+      this->setVelocityM1M2(direction, speed_percentage);
+    else
+      this->setVelocity(motor, direction, speed_percentage);
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -133,13 +139,19 @@ namespace OsrModule {
     MOVE_DISTANCE_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
+        OsrModule::MOTOR_SELECT motor,
         OsrModule::MOVE_DIRECTION direction,
         U8 speed_percentage,
         U32 distance
     )
   {
     speed_percentage = (speed_percentage > 100) ? 100 : speed_percentage;
-    this->setVelocityDistanceM1M2(direction, speed_percentage, distance);
+
+    if(motor == OsrModule::MOTOR_SELECT::BOTH)
+      this->setVelocityDistanceM1M2(direction, speed_percentage, distance);
+    else
+      this->setVelocityDistance(motor, direction, speed_percentage, distance);
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -147,13 +159,19 @@ namespace OsrModule {
     MOVE_ACCELERATED_CONTINUOUS_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
+        OsrModule::MOTOR_SELECT motor,
         OsrModule::MOVE_DIRECTION direction,
         U32 acceleration,
         U8 speed_percentage
     )
   {
     speed_percentage = (speed_percentage > 100) ? 100 : speed_percentage;
-    this->setAccelVelocityM1M2(direction, acceleration, speed_percentage);
+
+    if(motor == OsrModule::MOTOR_SELECT::BOTH)
+      this->setAccelVelocityM1M2(direction, acceleration, speed_percentage);
+    else
+      this->setAccelVelocity(motor, direction, acceleration, speed_percentage);
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
@@ -161,6 +179,7 @@ namespace OsrModule {
     MOVE_ACCELERATED_DISTANCE_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
+        OsrModule::MOTOR_SELECT motor,
         OsrModule::MOVE_DIRECTION direction,
         U32 acceleration,
         U8 speed_percentage,
@@ -168,7 +187,12 @@ namespace OsrModule {
     )
   {
     speed_percentage = (speed_percentage > 100) ? 100 : speed_percentage;
-    this->setAccelVelocityDistanceM1M2(direction, acceleration, speed_percentage, distance);
+
+    if(motor == OsrModule::MOTOR_SELECT::BOTH)
+      this->setAccelVelocityDistanceM1M2(direction, acceleration, speed_percentage, distance);
+    else
+      this->setAccelVelocityDistance(motor, direction, acceleration, speed_percentage, distance);
+
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
