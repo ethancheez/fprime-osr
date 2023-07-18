@@ -71,7 +71,8 @@ namespace OsrModule {
           const OsrModule::MOTOR_SELECT &motor, 
           F32 velocity, 
           U32 acceleration, 
-          U32 distance 
+          U32 distance,
+          F32 position
       );
 
       //! Handler implementation for run
@@ -159,6 +160,7 @@ namespace OsrModule {
       void setVelocityAccelDeccelPositionM1M2(U32 accel, U32 velocity, U32 deccel, U32 position);
 
       I32 velocity2qpps(F32 velocity, OsrModule::MOTOR_SELECT motor);
+      U32 position2tick(F32 position, OsrModule::MOTOR_SELECT motor);
 
       void getEncoderValues();
       void getSpeedValues();

@@ -12,6 +12,12 @@ module OsrModule {
 
         output port motorControlOut5: OsrModule.motorControl
 
+        output port getPolyDbVal: Svc.Poly
+
+        ###############################################################################
+        # Commands
+        ###############################################################################
+
         @ Respond to an incoming Twist command in one of two ways depending on the mode (intuitive)
         sync command CMD_CB(
             twist_linear_x: F32,
@@ -22,25 +28,6 @@ module OsrModule {
             twist_angular_z: F32,
             intuitive: bool
         )
-
-        ##############################################################################
-        #### Uncomment the following examples to start customizing your component ####
-        ##############################################################################
-
-        # @ Example async command
-        # async command COMMAND_NAME(param_name: U32)
-
-        # @ Example telemetry counter
-        # telemetry ExampleCounter: U64
-
-        # @ Example event
-        # event ExampleStateEvent(example_state: Fw.On) severity activity high id 0 format "State set to {}"
-
-        # @ Example port: receiving calls from the rate group
-        # sync input port run: Svc.Sched
-
-        # @ Example parameter
-        # param PARAMETER_NAME: U32
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
@@ -65,12 +52,6 @@ module OsrModule {
 
         @ Port for sending telemetry channels to downlink
         telemetry port tlmOut
-
-        @ Port to return the value of a parameter
-        param get port prmGetOut
-
-        @Port to set the value of a parameter
-        param set port prmSetOut
 
     }
 }

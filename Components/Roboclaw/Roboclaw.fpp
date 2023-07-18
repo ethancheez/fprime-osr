@@ -1,9 +1,9 @@
 module OsrModule {
 
     struct PosPidData {
-        kp: U32
-        ki: U32
-        kd: U32
+        kp: F32
+        ki: F32
+        kd: F32
         kiMax: U32
         deadZone: U32
         min: U32
@@ -19,6 +19,27 @@ module OsrModule {
 
         @ Port for receiving motor commands
         sync input port motorControlIn: OsrModule.motorControl
+
+        @ Data coming in
+        sync input port comDataIn: Drv.ByteStreamRecv
+
+        @ Data passing back out
+        output port comDataOut: Drv.ByteStreamSend
+
+        @ Allows for deallocation of buffers
+        output port deallocate: Fw.BufferSend
+
+        @ Allows for allocation of buffers
+        output port allocate: Fw.BufferGet
+
+        output port setPolyDbVal: Svc.Poly
+
+        @ Port receiving calls from the rate group
+        sync input port run: Svc.Sched
+
+        ###############################################################################
+        # Commands
+        ###############################################################################
 
         @ Continuously move in a specified direction at a given speed
         sync command MOVE_CONTINUOUS(motor: OsrModule.MOTOR_SELECT, direction: OsrModule.MOVE_DIRECTION, speed_percentage: U8)
@@ -37,21 +58,6 @@ module OsrModule {
 
         @ Reset encoder telemetry values
         sync command RESET_ENCODERS
-
-        @ Data coming in
-        sync input port comDataIn: Drv.ByteStreamRecv
-
-        @ Data passing back out
-        output port comDataOut: Drv.ByteStreamSend
-
-        @ Allows for deallocation of buffers
-        output port deallocate: Fw.BufferSend
-
-        @ Allows for allocation of buffers
-        output port allocate: Fw.BufferGet
-
-        @ Port receiving calls from the rate group
-        sync input port run: Svc.Sched
 
         ###############################################################################
         # Telemetry
@@ -86,12 +92,6 @@ module OsrModule {
 
         @ Port for sending telemetry channels to downlink
         telemetry port tlmOut
-
-        @ Port to return the value of a parameter
-        param get port prmGetOut
-
-        @Port to set the value of a parameter
-        param set port prmSetOut
 
     }
 }

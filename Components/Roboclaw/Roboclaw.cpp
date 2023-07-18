@@ -8,6 +8,7 @@
 #include <Components/Roboclaw/Roboclaw.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Logger/Logger.hpp>
+#include <Fw/Types/PolyType.hpp>
 
 namespace OsrModule {
 
@@ -80,6 +81,11 @@ namespace OsrModule {
             this->encoderTlmData[0] = ret1;
             this->encoderTlmData[1] = ret2;
             this->tlmWrite_EncoderValues(encoderTlmData);
+
+            Fw::PolyType encoderPolyData(&encoderTlmData);
+            Svc::MeasurementStatus mstat;
+            Fw::Time ts(TB_NONE,6,7);
+            this->setPolyDbVal_out(0, m_addr - 128, mstat, ts, encoderPolyData);
           }
           else
           {
@@ -94,6 +100,7 @@ namespace OsrModule {
       case OsrModule::ROBOCLAW_CMD::READM1POSPID:
       case OsrModule::ROBOCLAW_CMD::READM2POSPID:
           U32 kp, ki, kd, kiMax, deadZone, min, max;
+          kp = ki = kd = kiMax = deadZone = min = max = 0;
 
           if(rx_index == 30)
           {
@@ -132,7 +139,7 @@ namespace OsrModule {
             max += rx_buffer[26] << 8;
             max += rx_buffer[27];
 
-            OsrModule::PosPidData posPidData = { kp, ki, kd, kiMax, deadZone, min, max };
+            OsrModule::PosPidData posPidData = { ((F32)kp)/1024, ((F32)ki)/1024, ((F32)kd)/1024, kiMax, deadZone, min, max };
 
             if(curr_cmd == OsrModule::ROBOCLAW_CMD::READM1POSPID)
             {
@@ -169,7 +176,8 @@ namespace OsrModule {
         const OsrModule::MOTOR_SELECT &motor,
         F32 velocity,
         U32 acceleration,
-        U32 distance
+        U32 distance,
+        F32 position
     )
   {
     I32 vel = this->velocity2qpps(velocity, motor);
@@ -179,6 +187,15 @@ namespace OsrModule {
       case OsrModule::ROBOCLAW_CMD::M1SPEED:
       case OsrModule::ROBOCLAW_CMD::M2SPEED:
         this->setVelocity(motor, vel);
+        break;
+      case OsrModule::ROBOCLAW_CMD::M1SPEEDACCEL:
+      case OsrModule::ROBOCLAW_CMD::M2SPEEDACCEL:
+        this->setAccelVelocity(motor, acceleration, vel);
+        break;
+      case OsrModule::ROBOCLAW_CMD::M1SPEEDACCELDECCELPOS:
+      case OsrModule::ROBOCLAW_CMD::M2SPEEDACCELDECCELPOS:
+        U32 tick = this->position2tick(position, motor);
+        this->setVelocityAccelDeccelPosition(motor, acceleration, 1000, acceleration, tick);
         break;
     }
   }

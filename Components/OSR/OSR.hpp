@@ -99,8 +99,6 @@ namespace OsrModule {
       RoverVelocities calculate_drive_velocities(F32 speed, F32 curr_radius);
       bool corner_cmd_threshold(RoverCornerPositions corner_pos);
 
-      U32 velocity2qpps(F32 velocity, F32 ticks_per_rev, F32 gear_ratio);
-
       void setDriveVelocities(RoverVelocities vel);
       void setCornerPositions(RoverCornerPositions pos);
 

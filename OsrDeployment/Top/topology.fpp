@@ -34,6 +34,7 @@ module OsrDeployment {
     instance bufferManager
     instance framer
     instance linuxTime
+    instance polyDb
     instance prmDb
     instance rateGroup1
     instance rateGroup2
@@ -108,11 +109,15 @@ module OsrDeployment {
       rateGroup1.RateGroupMemberOut[0] -> tlmSend.Run
       rateGroup1.RateGroupMemberOut[1] -> fileDownlink.Run
       rateGroup1.RateGroupMemberOut[2] -> systemResources.run
+      rateGroup1.RateGroupMemberOut[3] -> roboclaw1.run
+      rateGroup1.RateGroupMemberOut[4] -> roboclaw2.run
+      rateGroup1.RateGroupMemberOut[5] -> roboclaw3.run
+      rateGroup1.RateGroupMemberOut[6] -> roboclaw4.run
+      rateGroup1.RateGroupMemberOut[7] -> roboclaw5.run
 
       # Rate group 2
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2.CycleIn
       rateGroup2.RateGroupMemberOut[0] -> cmdSeq.schedIn
-      rateGroup2.RateGroupMemberOut[1] -> roboclaw1.run
 
       # Rate group 3
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3.CycleIn
@@ -166,6 +171,9 @@ module OsrDeployment {
       osr.motorControlOut3 -> roboclaw3.motorControlIn
       osr.motorControlOut4 -> roboclaw4.motorControlIn
       osr.motorControlOut5 -> roboclaw5.motorControlIn
+
+      osr.getPolyDbVal -> polyDb.getValue
+      roboclaw1.setPolyDbVal -> polyDb.setValue
     }
 
   }

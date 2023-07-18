@@ -6,6 +6,7 @@
 
 
 #include <Components/OSR/OSR.hpp>
+#include <Components/Roboclaw/Roboclaw.hpp>
 #include <FpConfig.hpp>
 #include <limits>
 #include <algorithm>
@@ -85,8 +86,10 @@ namespace OsrModule {
     F32 velocity = std::min(max_vel, twist.linear.x);
 
     OSR::RoverVelocities drive_vel = this->calculate_drive_velocities(velocity, desired_turning_radius);
-    
-    this->setCornerPositions(corner_pos);
+
+    if(this->corner_cmd_threshold(corner_pos))
+      this->setCornerPositions(corner_pos);
+
     this->setDriveVelocities(drive_vel);
 
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
@@ -233,22 +236,53 @@ namespace OsrModule {
 
   bool OSR::corner_cmd_threshold(RoverCornerPositions corner_pos)
   {
-    return true;
+    I32 curr_positions[4];
+
+    Fw::PolyType encoderPolyData;
+    Svc::MeasurementStatus mstat;
+    Fw::Time ts;
+    void *data;
+    OsrModule::MotorTlmData *encoderTlmData;
+
+    this->getPolyDbVal_out(0, 128 - 0x80, mstat, ts, encoderPolyData);
+    encoderPolyData.get(data);
+    encoderTlmData = reinterpret_cast<OsrModule::MotorTlmData *>(data);
+    curr_positions[0] = (*encoderTlmData)[0]; // Right front
+    curr_positions[1] = (*encoderTlmData)[1]; // Right back
+    this->getPolyDbVal_out(0, 128 - 0x80, mstat, ts, encoderPolyData);
+    encoderPolyData.get(data);
+    encoderTlmData = reinterpret_cast<OsrModule::MotorTlmData *>(data);
+    curr_positions[2] = (*encoderTlmData)[0]; // Left back
+    curr_positions[3] = (*encoderTlmData)[1]; // Left front
+
+    if(abs(corner_pos.right_front_pos - curr_positions[0]) > this->no_cmd_thresh)
+        return true;
+    else if(abs(corner_pos.right_back_pos - curr_positions[1]) > this->no_cmd_thresh)
+        return true;
+    else if(abs(corner_pos.left_back_pos - curr_positions[2]) > this->no_cmd_thresh)
+        return true;
+    else if(abs(corner_pos.left_front_pos - curr_positions[3]) > this->no_cmd_thresh)
+        return true;
+    else
+        return false;
   }
 
   void OSR::setDriveVelocities(RoverVelocities vel)
   {
-    this->motorControlOut1_out(0, OsrModule::ROBOCLAW_CMD::M1SPEED, OsrModule::MOTOR_SELECT::MOTOR1, vel.right_front_vel, 0, 0);
-    this->motorControlOut1_out(0, OsrModule::ROBOCLAW_CMD::M2SPEED, OsrModule::MOTOR_SELECT::MOTOR2, vel.right_middle_vel, 0, 0);
-    this->motorControlOut2_out(0, OsrModule::ROBOCLAW_CMD::M1SPEED, OsrModule::MOTOR_SELECT::MOTOR1, vel.right_back_vel, 0, 0);
-    this->motorControlOut2_out(0, OsrModule::ROBOCLAW_CMD::M2SPEED, OsrModule::MOTOR_SELECT::MOTOR2, vel.left_back_vel, 0, 0);
-    this->motorControlOut3_out(0, OsrModule::ROBOCLAW_CMD::M1SPEED, OsrModule::MOTOR_SELECT::MOTOR1, vel.left_middle_vel, 0, 0);
-    this->motorControlOut3_out(0, OsrModule::ROBOCLAW_CMD::M2SPEED, OsrModule::MOTOR_SELECT::MOTOR2, vel.left_front_vel, 0, 0);
+    this->motorControlOut1_out(0, OsrModule::ROBOCLAW_CMD::M1SPEEDACCEL, OsrModule::MOTOR_SELECT::MOTOR1, vel.right_front_vel, 1000, 0, 0);
+    this->motorControlOut1_out(0, OsrModule::ROBOCLAW_CMD::M2SPEEDACCEL, OsrModule::MOTOR_SELECT::MOTOR2, vel.right_middle_vel, 1000, 0, 0);
+    this->motorControlOut2_out(0, OsrModule::ROBOCLAW_CMD::M1SPEEDACCEL, OsrModule::MOTOR_SELECT::MOTOR1, vel.right_back_vel, 1000, 0, 0);
+    this->motorControlOut2_out(0, OsrModule::ROBOCLAW_CMD::M2SPEEDACCEL, OsrModule::MOTOR_SELECT::MOTOR2, vel.left_back_vel, 1000, 0, 0);
+    this->motorControlOut3_out(0, OsrModule::ROBOCLAW_CMD::M1SPEEDACCEL, OsrModule::MOTOR_SELECT::MOTOR1, vel.left_middle_vel, 1000, 0, 0);
+    this->motorControlOut3_out(0, OsrModule::ROBOCLAW_CMD::M2SPEEDACCEL, OsrModule::MOTOR_SELECT::MOTOR2, vel.left_front_vel, 1000, 0, 0);
   }
 
   void OSR::setCornerPositions(RoverCornerPositions pos)
   {
-    
+    this->motorControlOut4_out(0, OsrModule::ROBOCLAW_CMD::M1SPEEDACCELDECCELPOS, OsrModule::MOTOR_SELECT::MOTOR1, 0, 0, 0, pos.right_front_pos);
+    this->motorControlOut4_out(0, OsrModule::ROBOCLAW_CMD::M2SPEEDACCELDECCELPOS, OsrModule::MOTOR_SELECT::MOTOR2, 0, 0, 0, pos.right_back_pos);
+    this->motorControlOut5_out(0, OsrModule::ROBOCLAW_CMD::M1SPEEDACCELDECCELPOS, OsrModule::MOTOR_SELECT::MOTOR1, 0, 0, 0, pos.left_back_pos);
+    this->motorControlOut5_out(0, OsrModule::ROBOCLAW_CMD::M2SPEEDACCELDECCELPOS, OsrModule::MOTOR_SELECT::MOTOR2, 0, 0, 0, pos.left_front_pos);
   }
 
 } // end namespace OsrModule

@@ -7,6 +7,7 @@
 #include <Components/Roboclaw/Roboclaw.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Logger/Logger.hpp>
+#include <algorithm>
 
 namespace OsrModule {
 
@@ -136,6 +137,24 @@ namespace OsrModule {
         F32 gear_ratio = (motor == OsrModule::MOTOR_SELECT::MOTOR1) ? m1_config.gear_ratio : m2_config.gear_ratio;
         F32 ticks_per_rev = (motor == OsrModule::MOTOR_SELECT::MOTOR1) ? m1_config.ticks_per_rev : m2_config.ticks_per_rev;
         return velocity * gear_ratio * ticks_per_rev / (2 * 3.1415926535897);
+    }
+
+    U32 Roboclaw::position2tick(F32 position, OsrModule::MOTOR_SELECT motor)
+    {
+        F32 gear_ratio = (motor == OsrModule::MOTOR_SELECT::MOTOR1) ? m1_config.gear_ratio : m2_config.gear_ratio;
+        F32 ticks_per_rev = (motor == OsrModule::MOTOR_SELECT::MOTOR1) ? m1_config.ticks_per_rev : m2_config.ticks_per_rev;
+        NATIVE_INT_TYPE index = (motor == OsrModule::MOTOR_SELECT::MOTOR1) ? 0 : 1;
+
+        F32 ticks_per_rad = ticks_per_rev / (2 * 3.1415926535897);
+        U32 enc_min = posPidTlmData[index].getmin();
+        U32 enc_max = posPidTlmData[index].getmax();
+
+        if(enc_min == 0 || enc_max == 0)
+            return position * ticks_per_rad;
+        F32 mid = enc_min + (enc_max - enc_min) / 2;
+        U32 tick = U32(mid + position * ticks_per_rad / gear_ratio);
+
+        return std::max(enc_min, std::min(enc_max, tick));
     }
 
     void Roboclaw::getEncoderValues()

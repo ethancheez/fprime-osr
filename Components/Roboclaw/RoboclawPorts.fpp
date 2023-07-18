@@ -114,6 +114,7 @@ module OsrModule {
         velocity: F32
         acceleration: U32
         distance: U32
+        position: F32
     )
 
 }

@@ -126,6 +126,8 @@ module OsrDeployment {
 
   instance comStub: Svc.ComStub base id 0x4B00
 
+  instance polyDb: Svc.PolyDb base id 0x5000
+
   instance roboclawCommDriver: Drv.LinuxUartDriver base id 0x10000
 
   instance osr: OsrModule.OSR base id 0x10100
