@@ -150,8 +150,8 @@ module OsrDeployment {
 
     connections Roboclaw {
       roboclawCommDriver.allocate -> bufferManager.bufferGetCallee
-      roboclawCommDriver.$recv -> roboclaw1.comDataIn
-      roboclaw1.deallocate -> bufferManager.bufferSendIn
+      roboclawCommDriver.$recv -> roboclaw1.comDataIn     # TODO: Change to serial hub
+      roboclaw1.deallocate -> bufferManager.bufferSendIn  # TODO: Change to serial hub
 
       roboclaw1.allocate -> bufferManager.bufferGetCallee
       roboclaw1.comDataOut -> roboclawCommDriver.send
@@ -174,6 +174,10 @@ module OsrDeployment {
 
       osr.getPolyDbVal -> polyDb.getValue
       roboclaw1.setPolyDbVal -> polyDb.setValue
+      roboclaw2.setPolyDbVal -> polyDb.setValue
+      roboclaw3.setPolyDbVal -> polyDb.setValue
+      roboclaw4.setPolyDbVal -> polyDb.setValue
+      roboclaw5.setPolyDbVal -> polyDb.setValue
     }
 
   }

@@ -195,7 +195,7 @@ namespace OsrModule {
       case OsrModule::ROBOCLAW_CMD::M1SPEEDACCELDECCELPOS:
       case OsrModule::ROBOCLAW_CMD::M2SPEEDACCELDECCELPOS:
         U32 tick = this->position2tick(position, motor);
-        this->setVelocityAccelDeccelPosition(motor, acceleration, 1000, acceleration, tick);
+        this->setVelocityAccelDeccelPosition(motor, acceleration, velocity, acceleration, tick);
         break;
     }
   }
