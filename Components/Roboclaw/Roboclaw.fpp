@@ -1,6 +1,18 @@
 module OsrModule {
 
+    struct PosPidData {
+        kp: U32
+        ki: U32
+        kd: U32
+        kiMax: U32
+        deadZone: U32
+        min: U32
+        max: U32
+    }
+
     array MotorTlmData = [2] I32
+
+    array MotorPosPIDData = [2] PosPidData
 
     @ Roboclaw Component
     passive component Roboclaw {
@@ -49,6 +61,8 @@ module OsrModule {
 
         telemetry SpeedValues: MotorTlmData
 
+        telemetry PosPIDValues: MotorPosPIDData
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################
@@ -72,6 +86,12 @@ module OsrModule {
 
         @ Port for sending telemetry channels to downlink
         telemetry port tlmOut
+
+        @ Port to return the value of a parameter
+        param get port prmGetOut
+
+        @Port to set the value of a parameter
+        param set port prmSetOut
 
     }
 }

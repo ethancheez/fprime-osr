@@ -2,9 +2,26 @@ module OsrModule {
     @ Component for the Open Source Rover
     passive component OSR {
 
-        output port motorControlOut: OsrModule.motorControl
+        output port motorControlOut1: OsrModule.motorControl
+        
+        output port motorControlOut2: OsrModule.motorControl
+        
+        output port motorControlOut3: OsrModule.motorControl
 
-        sync command TODO
+        output port motorControlOut4: OsrModule.motorControl
+
+        output port motorControlOut5: OsrModule.motorControl
+
+        @ Respond to an incoming Twist command in one of two ways depending on the mode (intuitive)
+        sync command CMD_CB(
+            twist_linear_x: F32,
+            twist_linear_y: F32,
+            twist_linear_z: F32,
+            twist_angular_x: F32,
+            twist_angular_y: F32,
+            twist_angular_z: F32,
+            intuitive: bool
+        )
 
         ##############################################################################
         #### Uncomment the following examples to start customizing your component ####

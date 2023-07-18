@@ -150,9 +150,22 @@ module OsrDeployment {
 
       roboclaw1.allocate -> bufferManager.bufferGetCallee
       roboclaw1.comDataOut -> roboclawCommDriver.send
+      roboclaw2.allocate -> bufferManager.bufferGetCallee
+      roboclaw2.comDataOut -> roboclawCommDriver.send
+      roboclaw3.allocate -> bufferManager.bufferGetCallee
+      roboclaw3.comDataOut -> roboclawCommDriver.send
+      roboclaw4.allocate -> bufferManager.bufferGetCallee
+      roboclaw4.comDataOut -> roboclawCommDriver.send
+      roboclaw5.allocate -> bufferManager.bufferGetCallee
+      roboclaw5.comDataOut -> roboclawCommDriver.send
+
       roboclawCommDriver.deallocate -> bufferManager.bufferSendIn
 
-      osr.motorControlOut -> roboclaw1.motorControlIn
+      osr.motorControlOut1 -> roboclaw1.motorControlIn
+      osr.motorControlOut2 -> roboclaw2.motorControlIn
+      osr.motorControlOut3 -> roboclaw3.motorControlIn
+      osr.motorControlOut4 -> roboclaw4.motorControlIn
+      osr.motorControlOut5 -> roboclaw5.motorControlIn
     }
 
   }

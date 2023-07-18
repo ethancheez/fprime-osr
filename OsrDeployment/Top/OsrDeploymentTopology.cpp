@@ -165,11 +165,12 @@ void setupTopology(const TopologyState& state) {
         Fw::Logger::logMsg("Failed to open UART port /dev/ttyS0 at speed %" PRIu32 "\n", Drv::LinuxUartDriver::UartBaudRate::BAUD_115K);
     }
 
-    roboclaw1.set_addr(128); // Right front (M1), Right middle (M2)
-    roboclaw2.set_addr(129); // Right back (M1), Left back (M2)
-    roboclaw3.set_addr(130); // Left middle (M1), Left front (M2)
-    roboclaw4.set_addr(131); // Right front corner (M1), Right back corner (M2)
-    roboclaw5.set_addr(132); // Left back corner (M1), Left front corner (M2)
+    // MotorConfig: { ticks_per_rev, gear_ratio }
+    roboclaw1.configure(128, { 28, 26.9 }, { 28, 26.9 });           // Right front (M1), Right middle (M2)
+    roboclaw2.configure(129, { 28, 26.9 }, { 28, 26.9 });           // Right back (M1), Left back (M2)
+    roboclaw3.configure(130, { 28, 26.9 }, { 28, 26.9 });           // Left middle (M1), Left front (M2)
+    roboclaw4.configure(131, { 2000, 0.3333 }, { 2000, 0.3333 });   // Right front corner (M1), Right back corner (M2)
+    roboclaw5.configure(132, { 2000, 0.3333 }, { 2000, 0.3333 });   // Left back corner (M1), Left front corner (M2)
 }
 
 // Variables used for cycle simulation

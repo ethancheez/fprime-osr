@@ -111,7 +111,7 @@ module OsrModule {
     port motorControl(
         cmd: ROBOCLAW_CMD
         motor: MOTOR_SELECT
-        speed_percentage: U8
+        velocity: F32
         acceleration: U32
         distance: U32
     )

@@ -20,7 +20,15 @@ namespace OsrModule {
 
     enum TLM_STATE_MACHINE {
       ENCODER,
-      SPEED
+      SPEED,
+      POS_PID1,
+      POS_PID2
+    };
+
+    struct MotorConfig
+    {
+      F32 ticks_per_rev;
+      F32 gear_ratio;
     };
 
     public:
@@ -39,7 +47,7 @@ namespace OsrModule {
       //!
       ~Roboclaw();
 
-      void set_addr(U8 addr);
+      void configure(U8 addr, MotorConfig m1config, MotorConfig m2config);
 
     PRIVATE:
 
@@ -61,7 +69,7 @@ namespace OsrModule {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           const OsrModule::ROBOCLAW_CMD &cmd, 
           const OsrModule::MOTOR_SELECT &motor, 
-          U8 speed_percentage, 
+          F32 velocity, 
           U32 acceleration, 
           U32 distance 
       );
@@ -139,20 +147,23 @@ namespace OsrModule {
 
     PRIVATE:
 
-      void setDutyCycle(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocity(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocityDistance(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
-      void setAccelVelocity(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
-      void setAccelVelocityDistance(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
-      void setDutyCycleM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocityM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage);
-      void setVelocityDistanceM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance);
-      void setAccelVelocityM1M2(OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage);
-      void setAccelVelocityDistanceM1M2(OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance);
+      void setVelocity(OsrModule::MOTOR_SELECT motor, I32 velocity);
+      void setVelocityDistance(OsrModule::MOTOR_SELECT motor, I32 velocity, U32 distance);
+      void setAccelVelocity(OsrModule::MOTOR_SELECT motor, U32 accel, I32 velocity);
+      void setAccelVelocityDistance(OsrModule::MOTOR_SELECT motor, U32 accel, I32 velocity, U32 distance);
+      void setVelocityAccelDeccelPosition(OsrModule::MOTOR_SELECT motor, U32 accel, U32 velocity, U32 deccel, U32 position);
+      void setVelocityM1M2(I32 velocity);
+      void setVelocityDistanceM1M2(I32 velocity, U32 distance);
+      void setAccelVelocityM1M2(U32 accel, I32 velocity);
+      void setAccelVelocityDistanceM1M2(U32 accel, I32 velocity, U32 distance);
+      void setVelocityAccelDeccelPositionM1M2(U32 accel, U32 velocity, U32 deccel, U32 position);
+
+      I32 velocity2qpps(F32 velocity, OsrModule::MOTOR_SELECT motor);
 
       void getEncoderValues();
       void getSpeedValues();
-      void updateTlm(OsrModule::ROBOCLAW_CMD cmd, I32 ret1, I32 ret2);
+      void getPositionPIDs();
+      void switchTlmState();
 
       void fillBuffer8(U8 *buf, U8 val);
       void fillBuffer16(U8 *buf, U16 val);
@@ -161,15 +172,19 @@ namespace OsrModule {
       U16 crc16(U8 *packet, NATIVE_INT_TYPE nBytes);
 
       NATIVE_INT_TYPE m_addr;
+      MotorConfig m1_config;
+      MotorConfig m2_config;
+
       OsrModule::ROBOCLAW_CMD curr_cmd;
-      U8 tx_buffer[32];
-      U8 rx_buffer[32];
+      U8 tx_buffer[33];
+      U8 rx_buffer[33];
       NATIVE_INT_TYPE rx_index;
       bool waitRecv;
 
       // Telemetry Data
       OsrModule::MotorTlmData encoderTlmData;
       OsrModule::MotorTlmData speedTlmData;
+      OsrModule::MotorPosPIDData posPidTlmData;
       TLM_STATE_MACHINE tlm_state;
 
     };

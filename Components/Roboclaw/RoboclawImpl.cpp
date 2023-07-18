@@ -6,83 +6,29 @@
 
 #include <Components/Roboclaw/Roboclaw.hpp>
 #include <FpConfig.hpp>
+#include <Fw/Logger/Logger.hpp>
 
 namespace OsrModule {
 
-    void Roboclaw::setDutyCycle(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage)
+    void Roboclaw::setVelocity(OsrModule::MOTOR_SELECT motor, I32 velocity)
     {
-        I32 duty_cycle = MAX_DUTY_CYCLE * ((F32)speed_percentage / 100);
-
-        if(direction == OsrModule::MOVE_DIRECTION::BACKWARD)
-            duty_cycle *= -1;
-        else if(direction == OsrModule::MOVE_DIRECTION::STOP)
-            duty_cycle = 0;
-
-        fillBuffer16(&tx_buffer[0], duty_cycle);    // Motor Duty Cycle
-        
-        OsrModule::ROBOCLAW_CMD cmd = (motor == OsrModule::MOTOR_SELECT::MOTOR1) ? OsrModule::ROBOCLAW_CMD::M1DUTY : OsrModule::ROBOCLAW_CMD::M2DUTY;
-        this->write(m_addr, cmd, tx_buffer, 2);
-    }
-
-    void Roboclaw::setDutyCycleM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage)
-    {
-        I32 duty_cycle = MAX_DUTY_CYCLE * ((F32)speed_percentage / 100);
-
-        if(direction == OsrModule::MOVE_DIRECTION::BACKWARD)
-            duty_cycle *= -1;
-        else if(direction == OsrModule::MOVE_DIRECTION::STOP)
-            duty_cycle = 0;
-
-        fillBuffer16(&tx_buffer[0], duty_cycle);    // Motor 1 Duty Cycle
-        fillBuffer16(&tx_buffer[2], duty_cycle);    // Motor 2 Duty Cycle
-        
-        this->write(m_addr, OsrModule::ROBOCLAW_CMD::MIXEDDUTY, tx_buffer, 4);
-    }
-
-    void Roboclaw::setVelocity(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage)
-    {
-        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
-
-        if(direction == OsrModule::MOVE_DIRECTION::BACKWARD)
-            velocity *= -1;
-        else if(direction == OsrModule::MOVE_DIRECTION::STOP)
-            velocity = 0;
-
         fillBuffer32(&tx_buffer[0], velocity);  // Motor Velocity
         
         OsrModule::ROBOCLAW_CMD cmd = (motor == OsrModule::MOTOR_SELECT::MOTOR1) ? OsrModule::ROBOCLAW_CMD::M1SPEED : OsrModule::ROBOCLAW_CMD::M2SPEED;
         this->write(m_addr, cmd, tx_buffer, 4);
     }
 
-    void Roboclaw::setVelocityM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage)
+    void Roboclaw::setVelocityM1M2(I32 velocity)
     {
-        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
-
-        if(direction == OsrModule::MOVE_DIRECTION::BACKWARD)
-            velocity *= -1;
-        else if(direction == OsrModule::MOVE_DIRECTION::STOP)
-            velocity = 0;
-
         fillBuffer32(&tx_buffer[0], velocity);  // Motor 1 Velocity
         fillBuffer32(&tx_buffer[4], velocity);  // Motor 2 Velocity
         
         this->write(m_addr, OsrModule::ROBOCLAW_CMD::MIXEDSPEED, tx_buffer, 8);
     }
 
-    void Roboclaw::setVelocityDistance(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance)
+    void Roboclaw::setVelocityDistance(OsrModule::MOTOR_SELECT motor, I32 velocity, U32 distance)
     {
-        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
         U8 flag = 1;
-
-        if(direction == OsrModule::MOVE_DIRECTION::BACKWARD)
-        {
-            velocity *= -1;
-        }
-        else if(direction == OsrModule::MOVE_DIRECTION::STOP)
-        {
-            velocity = 0;
-            distance = 0;
-        }
 
         fillBuffer32(&tx_buffer[0], velocity);  // Motor Velocity
         fillBuffer32(&tx_buffer[4], distance);  // Motor Distance
@@ -92,20 +38,9 @@ namespace OsrModule {
         this->write(m_addr, cmd, tx_buffer, 9);
     }
 
-    void Roboclaw::setVelocityDistanceM1M2(OsrModule::MOVE_DIRECTION direction, U8 speed_percentage, U32 distance)
+    void Roboclaw::setVelocityDistanceM1M2(I32 velocity, U32 distance)
     {
-        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
         U8 flag = 1;
-
-        if(direction == OsrModule::MOVE_DIRECTION::BACKWARD)
-        {
-            velocity *= -1;
-        }
-        else if(direction == OsrModule::MOVE_DIRECTION::STOP)
-        {
-            velocity = 0;
-            distance = 0;
-        }
 
         fillBuffer32(&tx_buffer[0], velocity);  // Motor 1 Velocity
         fillBuffer32(&tx_buffer[4], distance);  // Motor 1 Distance
@@ -116,15 +51,9 @@ namespace OsrModule {
         this->write(m_addr, OsrModule::ROBOCLAW_CMD::MIXEDSPEEDDIST, tx_buffer, 17);
     }
 
-    void Roboclaw::setAccelVelocity(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage)
+    void Roboclaw::setAccelVelocity(OsrModule::MOTOR_SELECT motor, U32 accel, I32 velocity)
     {
-        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
         U8 flag = 1;
-
-        if(direction == OsrModule::MOVE_DIRECTION::BACKWARD)
-            velocity *= -1;
-        else if(direction == OsrModule::MOVE_DIRECTION::STOP)
-            velocity = 0;
         
         fillBuffer32(&tx_buffer[0], accel);     // Acceleration
         fillBuffer32(&tx_buffer[4], velocity);  // Motor Velocity
@@ -133,15 +62,9 @@ namespace OsrModule {
         this->write(m_addr, cmd, tx_buffer, 8);
     }
 
-    void Roboclaw::setAccelVelocityM1M2(OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage)
+    void Roboclaw::setAccelVelocityM1M2(U32 accel, I32 velocity)
     {
-        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
         U8 flag = 1;
-
-        if(direction == OsrModule::MOVE_DIRECTION::BACKWARD)
-            velocity *= -1;
-        else if(direction == OsrModule::MOVE_DIRECTION::STOP)
-            velocity = 0;
         
         fillBuffer32(&tx_buffer[0], accel);     // Acceleration
         fillBuffer32(&tx_buffer[4], velocity);  // Motor 1 Velocity
@@ -150,20 +73,9 @@ namespace OsrModule {
         this->write(m_addr, OsrModule::ROBOCLAW_CMD::MIXEDSPEEDACCEL, tx_buffer, 12);
     }
 
-    void Roboclaw::setAccelVelocityDistance(OsrModule::MOTOR_SELECT motor, OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance)
+    void Roboclaw::setAccelVelocityDistance(OsrModule::MOTOR_SELECT motor, U32 accel, I32 velocity, U32 distance)
     {
-        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
         U8 flag = 1;
-
-        if(direction == OsrModule::MOVE_DIRECTION::BACKWARD)
-        {
-            velocity *= -1;
-        }
-        else if(direction == OsrModule::MOVE_DIRECTION::STOP)
-        {
-            velocity = 0;
-            distance = 0;
-        }
         
         fillBuffer32(&tx_buffer[0], accel);     // Acceleration
         fillBuffer32(&tx_buffer[4], velocity);  // Motor Velocity 
@@ -174,20 +86,9 @@ namespace OsrModule {
         this->write(m_addr, cmd, tx_buffer, 13);
     }
 
-    void Roboclaw::setAccelVelocityDistanceM1M2(OsrModule::MOVE_DIRECTION direction, U32 accel, U8 speed_percentage, U32 distance)
+    void Roboclaw::setAccelVelocityDistanceM1M2(U32 accel, I32 velocity, U32 distance)
     {
-        I32 velocity = MAX_VELOCITY * ((F32)speed_percentage / 100);
         U8 flag = 1;
-
-        if(direction == OsrModule::MOVE_DIRECTION::BACKWARD)
-        {
-            velocity *= -1;
-        }
-        else if(direction == OsrModule::MOVE_DIRECTION::STOP)
-        {
-            velocity = 0;
-            distance = 0;
-        }
         
         fillBuffer32(&tx_buffer[0], accel);     // Acceleration
         fillBuffer32(&tx_buffer[4], velocity);  // Motor 1 Velocity 
@@ -199,40 +100,96 @@ namespace OsrModule {
         this->write(m_addr, OsrModule::ROBOCLAW_CMD::MIXEDSPEEDACCELDIST, tx_buffer, 21);
     }
 
+    void Roboclaw::setVelocityAccelDeccelPosition(OsrModule::MOTOR_SELECT motor, U32 accel, U32 velocity, U32 deccel, U32 position)
+    {
+        U8 flag = 1;
+
+        fillBuffer32(&tx_buffer[0], accel);     // Acceleration
+        fillBuffer32(&tx_buffer[4], velocity);  // Motor velocity
+        fillBuffer32(&tx_buffer[8], deccel);    // Motor deceleration
+        fillBuffer32(&tx_buffer[12], position); // Motor position
+        fillBuffer8(&tx_buffer[16], flag);      // Flag
+
+        OsrModule::ROBOCLAW_CMD cmd = (motor == OsrModule::MOTOR_SELECT::MOTOR1) ? OsrModule::ROBOCLAW_CMD::M1SPEEDACCELDECCELPOS : OsrModule::ROBOCLAW_CMD::M2SPEEDACCELDECCELPOS;
+        this->write(m_addr, cmd, tx_buffer, 17);
+    }
+
+    void Roboclaw::setVelocityAccelDeccelPositionM1M2(U32 accel, U32 velocity, U32 deccel, U32 position)
+    {
+        U8 flag = 1;
+
+        fillBuffer32(&tx_buffer[0], accel);     // Motor 1 Acceleration
+        fillBuffer32(&tx_buffer[4], velocity);  // Motor 1 velocity
+        fillBuffer32(&tx_buffer[8], deccel);    // Motor 1 deceleration
+        fillBuffer32(&tx_buffer[12], position); // Motor 1 position
+        fillBuffer32(&tx_buffer[16], accel);    // Motor 2 Acceleration
+        fillBuffer32(&tx_buffer[20], velocity); // Motor 2 velocity
+        fillBuffer32(&tx_buffer[24], deccel);   // Motor 2 deceleration
+        fillBuffer32(&tx_buffer[28], position); // Motor 2 position
+        fillBuffer8(&tx_buffer[32], flag);      // Flag
+
+        this->write(m_addr, OsrModule::ROBOCLAW_CMD::MIXEDSPEEDACCELDECCELPOS, tx_buffer, 33);
+    }
+
+    I32 Roboclaw::velocity2qpps(F32 velocity, OsrModule::MOTOR_SELECT motor)
+    {
+        F32 gear_ratio = (motor == OsrModule::MOTOR_SELECT::MOTOR1) ? m1_config.gear_ratio : m2_config.gear_ratio;
+        F32 ticks_per_rev = (motor == OsrModule::MOTOR_SELECT::MOTOR1) ? m1_config.ticks_per_rev : m2_config.ticks_per_rev;
+        return velocity * gear_ratio * ticks_per_rev / (2 * 3.1415926535897);
+    }
+
     void Roboclaw::getEncoderValues()
     {
-        if(waitRecv || (not this->tlm_state == TLM_STATE_MACHINE::ENCODER))
+        if(waitRecv || (this->tlm_state != TLM_STATE_MACHINE::ENCODER))
             return;
 
         this->curr_cmd = OsrModule::ROBOCLAW_CMD::GETENCODERS;
-        this->write(m_addr, OsrModule::ROBOCLAW_CMD::GETENCODERS, nullptr, 0);
+        this->write(m_addr, curr_cmd, nullptr, 0);
         this->waitRecv = true;
     }
 
     void Roboclaw::getSpeedValues()
     {
-        if(waitRecv || (not this->tlm_state == TLM_STATE_MACHINE::SPEED))
+        if(waitRecv || (this->tlm_state != TLM_STATE_MACHINE::SPEED))
             return;
 
         this->curr_cmd = OsrModule::ROBOCLAW_CMD::GETISPEEDS;
-        this->write(m_addr, OsrModule::ROBOCLAW_CMD::GETISPEEDS, nullptr, 0);
+        this->write(m_addr, curr_cmd, nullptr, 0);
         this->waitRecv = true;
     }
 
-    void Roboclaw::updateTlm(OsrModule::ROBOCLAW_CMD cmd, I32 ret1, I32 ret2)
+    void Roboclaw::getPositionPIDs()
     {
-        switch(cmd)
+        if(waitRecv || ((this->tlm_state != TLM_STATE_MACHINE::POS_PID1) && (this->tlm_state != TLM_STATE_MACHINE::POS_PID2)))
+            return;
+
+        if(this->tlm_state == TLM_STATE_MACHINE::POS_PID1)
         {
-            case OsrModule::ROBOCLAW_CMD::GETENCODERS:
-                this->encoderTlmData[0] = ret1;
-                this->encoderTlmData[1] = ret2;
-                this->tlmWrite_EncoderValues(encoderTlmData);
+            this->curr_cmd = OsrModule::ROBOCLAW_CMD::READM1POSPID;
+        }
+        else
+        {
+            this->curr_cmd = OsrModule::ROBOCLAW_CMD::READM2POSPID;
+        }
+
+        this->write(m_addr, curr_cmd, nullptr, 0);
+        this->waitRecv = true;
+    }
+
+    void Roboclaw::switchTlmState()
+    {
+        switch(this->tlm_state)
+        {
+            case TLM_STATE_MACHINE::ENCODER:
                 this->tlm_state = TLM_STATE_MACHINE::SPEED;
                 break;
-            case OsrModule::ROBOCLAW_CMD::GETISPEEDS:
-                this->speedTlmData[0] = ret1;
-                this->speedTlmData[1] = ret2;
-                this->tlmWrite_SpeedValues(speedTlmData);
+            case TLM_STATE_MACHINE::SPEED:
+                this->tlm_state = TLM_STATE_MACHINE::POS_PID1;
+                break;
+            case TLM_STATE_MACHINE::POS_PID1:
+                this->tlm_state = TLM_STATE_MACHINE::POS_PID2;
+                break;
+            case TLM_STATE_MACHINE::POS_PID2:
                 this->tlm_state = TLM_STATE_MACHINE::ENCODER;
                 break;
             default:

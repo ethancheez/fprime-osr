@@ -78,24 +78,27 @@
         <channel name="systemResources.CPU_15"/>
     </packet>
 
-    <packet name="Roboclaw" id="8" level="1">
-        <channel name="roboclawCommDriver.BytesSent"/>
-        <channel name="roboclawCommDriver.BytesRecv"/>
-        <channel name="roboclaw1.EncoderValues"/>
-        <channel name="roboclaw1.SpeedValues"/>
-        <channel name="roboclaw2.EncoderValues"/>
-        <channel name="roboclaw2.SpeedValues"/>
-        <channel name="roboclaw3.EncoderValues"/>
-        <channel name="roboclaw3.SpeedValues"/>
-        <channel name="roboclaw4.EncoderValues"/>
-        <channel name="roboclaw4.SpeedValues"/>
-        <channel name="roboclaw5.EncoderValues"/>
-        <channel name="roboclaw5.SpeedValues"/>
-    </packet>
-
     <!-- Ignored packets -->
 
     <ignore>
         <channel name="cmdDisp.CommandErrors"/>
+
+        <channel name="roboclawCommDriver.BytesSent"/>
+        <channel name="roboclawCommDriver.BytesRecv"/>
+        <channel name="roboclaw1.EncoderValues"/>
+        <channel name="roboclaw1.SpeedValues"/>
+        <channel name="roboclaw1.PosPIDValues"/>
+        <channel name="roboclaw2.EncoderValues"/>
+        <channel name="roboclaw2.SpeedValues"/>
+        <channel name="roboclaw2.PosPIDValues"/>
+        <channel name="roboclaw3.EncoderValues"/>
+        <channel name="roboclaw3.SpeedValues"/>
+        <channel name="roboclaw3.PosPIDValues"/>
+        <channel name="roboclaw4.EncoderValues"/>
+        <channel name="roboclaw4.SpeedValues"/>
+        <channel name="roboclaw4.PosPIDValues"/>
+        <channel name="roboclaw5.EncoderValues"/>
+        <channel name="roboclaw5.SpeedValues"/>
+        <channel name="roboclaw5.PosPIDValues"/>
     </ignore>
 </packets>
